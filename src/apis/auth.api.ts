@@ -5,10 +5,18 @@ export const login = (data: ILoginPayload) => {
   return httpRequest.post("/auth/login", data);
 };
 
-export const forgotPassword = (data: any) => {
-  return httpRequest.post("/auth/forget-password", data);
+export const signUp = (data: any) => {
+  return httpRequest.post("/auth/signup", data);
 };
 
-export const resetPassword = (data: any) => {
-  return httpRequest.post("/auth/reset-password", data);
+export const logOut = () => {
+  return httpRequest.post("/auth/logout", {});
+};
+
+export const getUserProfile = () => {
+  return httpRequest.get("/auth/user");
+};
+
+export const getAdminProfile = () => {
+  return httpRequest.get("/auth/admin");
 };

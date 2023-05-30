@@ -1,11 +1,16 @@
 import { Layout } from "antd";
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useContext } from "react";
+import { Navigate, Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import AdminHeader from "./AdminHeader";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { AuthContext } from "@/context/AuthProvider";
 
 const AdminLayout: React.FunctionComponent = () => {
-  return (
+  const profile = useAuthStore((state) => state.profile);
+  const { loggedIn } = useContext(AuthContext) as any;
+
+  return loggedIn && profile.role === "user" ? (
     <Layout>
       <Layout.Sider className="!fixed top-0 w-52 h-screen">
         <Sidebar />
@@ -19,6 +24,8 @@ const AdminLayout: React.FunctionComponent = () => {
         </Layout.Content>
       </Layout>
     </Layout>
+  ) : (
+    <Navigate to="/auth/login" replace />
   );
 };
 

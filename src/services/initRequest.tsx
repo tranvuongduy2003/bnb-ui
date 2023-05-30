@@ -17,14 +17,13 @@ export type IConfig = AxiosRequestConfig;
 
 export const axiosInstance = axios.create(requestConfig);
 
-export default function initRequest(logOut: any) {
+export default function initRequest() {
   axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
       // const accessToken = getAccessToken();
       // if (accessToken && config.headers) {
       //   config.headers.Authorization = `Bearer ${accessToken}`;
       // }
-
       return config;
     },
     (error: AxiosError) => {
@@ -34,6 +33,7 @@ export default function initRequest(logOut: any) {
 
   axiosInstance.interceptors.response.use(
     (res: any) => {
+      console.log(res.data);
       return res.data;
     },
     async (error: any) => {
@@ -72,4 +72,4 @@ export default function initRequest(logOut: any) {
   );
 }
 
-// initRequest();
+initRequest();

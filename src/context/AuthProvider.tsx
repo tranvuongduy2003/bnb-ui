@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { login } from "@/apis/auth.api";
+import { logOut, login } from "@/apis/auth.api";
 import { checkNullish } from "@/helpers/checkNullist";
 import { useNavigate } from "react-router-dom";
 import {
@@ -12,6 +12,7 @@ import { getExpiredTime } from "@/utils/getExpiredTime";
 import { notification } from "antd";
 import { FailMsgTitle, SucessMsgTitle } from "@/constants/notification";
 import { useAppStore } from "@/stores/useAppStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export const AuthContext = React.createContext({});
 
@@ -25,6 +26,8 @@ const AuthProvider = ({ children }: any) => {
 
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const setProfile = useAuthStore((state) => state.setProfile);
+  const reset = useAuthStore((state) => state.reset);
 
   const openNotificationWithIcon = (
     type: NotificationType,
@@ -38,61 +41,57 @@ const AuthProvider = ({ children }: any) => {
     });
   };
 
-  const logIn = async (params: any) => {
-    const { email, password } = params;
-
+  const logIn = async (payload: any) => {
     setIsLoading(true);
     try {
       // LOGIN THEN GET AND SET TOKENS
-      const { data: loginPayload }: any = await login({
-        email: email,
-        password: password,
-      });
-      const accessTokenExp = getExpiredTime(loginPayload.accessToken);
-      const refreshTokenExp = getExpiredTime(loginPayload.refreshToken);
+      const { data: profile }: any = await login(payload);
+      const { password, ...rest } = profile;
 
-      // GET AND SET USER INFO
+      // SAVE USER SESSION
+      setProfile(rest);
 
-      // SET LOGIN SUCCESSFULLY
       setLoggedIn(true);
 
       // NAVIGATE TO HOME PAGE
       setIsLoading(false);
-      if (!isLoading) {
-        openNotificationWithIcon(
-          "success",
-          SucessMsgTitle,
-          "Login successfully!"
-        );
-      }
+      notification.success({
+        message: "Login successfully!",
+        duration: 0.25,
+        onClose: () => navigate("/"),
+      });
     } catch (error: any) {
       setIsLoading(false);
-      error.message.slice(0, 3).forEach((item: string) => {
-        api["error"]({
-          message: FailMsgTitle,
-          description: item,
-        });
+      notification.error({
+        message: error.message,
       });
     }
   };
 
-  const logOut = () => {
+  const logout = async () => {
     setIsLoading(true);
+    try {
+      // CALL API LOGOUT
+      await logOut();
 
-    // CLEAR STORAGE
+      // CLEAR STORAGE
+      reset();
 
-    // SET LOGOUT SUCCESSFULLY
-    setLoggedIn(false);
+      // SET LOGOUT SUCCESSFULLY
+      setLoggedIn(false);
 
-    // NAVIGATE TO LOGIN PAGE
-    setIsLoading(false);
-    if (!isLoading) {
-      openNotificationWithIcon(
-        "success",
-        SucessMsgTitle,
-        "Logout successfully!"
-      );
-      navigate("/auth/login");
+      // NAVIGATE TO LOGIN PAGE
+      setIsLoading(false);
+      notification.success({
+        message: "Logout successfully!",
+        duration: 0.25,
+        onClose: () => navigate("/auth/login"),
+      });
+    } catch (error: any) {
+      setIsLoading(false);
+      notification.error({
+        message: error.message,
+      });
     }
   };
 
@@ -100,9 +99,9 @@ const AuthProvider = ({ children }: any) => {
     <AuthContext.Provider
       value={{
         loggedIn,
-        logOut,
-        logIn,
         setLoggedIn,
+        logout,
+        logIn,
       }}
     >
       {contextHolder}

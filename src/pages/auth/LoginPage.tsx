@@ -1,42 +1,19 @@
+import { AuthContext } from "@/context/AuthProvider";
 import { useAppStore } from "@/stores/useAppStore";
-import {
-  Row,
-  Col,
-  Image,
-  Typography,
-  Form,
-  Input,
-  Checkbox,
-  Button,
-  notification,
-} from "antd";
-import React from "react";
+import { Row, Col, Image, Typography, Form, Input, Button } from "antd";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage: React.FunctionComponent = () => {
   const navigate = useNavigate();
 
   const [form] = Form.useForm();
+  const { logIn } = useContext(AuthContext) as any;
 
   const isLoading = useAppStore((state) => state.isLoading);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
 
   const handleLogin = async (values: any) => {
-    setIsLoading(true);
-    try {
-      setIsLoading(false);
-      notification.success({
-        message: "Login successfully!",
-        duration: 0.25,
-        onClose: () => navigate("/"),
-      });
-    } catch (error: any) {
-      setIsLoading(false);
-      console.log(error);
-      notification.error({
-        message: error.message,
-      });
-    }
+    await logIn(values);
   };
 
   return (
@@ -78,22 +55,9 @@ const LoginPage: React.FunctionComponent = () => {
               <Form.Item name="password" label="Password">
                 <Input.Password placeholder="Enter at least 8+ characters" />
               </Form.Item>
-              <Row align={"middle"} justify={"space-between"}>
-                <Col>
-                  <Form.Item className="m-0">
-                    <Checkbox defaultChecked={true} name="remember">
-                      Remember me
-                    </Checkbox>
-                  </Form.Item>
-                </Col>
-                <Col>
-                  <span className="underline cursor-pointer text-primary">
-                    Forgot password?
-                  </span>
-                </Col>
-              </Row>
               <Form.Item>
                 <Button
+                  loading={isLoading}
                   htmlType="submit"
                   className="w-full mt-8 text-white border-none bg-primary"
                 >

@@ -1,3 +1,4 @@
+import { signUp } from "@/apis/auth.api";
 import { useAppStore } from "@/stores/useAppStore";
 import { Button, Col, Form, Input, Row, Typography, notification } from "antd";
 import React from "react";
@@ -14,17 +15,17 @@ const SignupPage: React.FunctionComponent = () => {
   const handleSignUp = async (values: any) => {
     setIsLoading(true);
     try {
+      await signUp(values);
       setIsLoading(false);
       notification.success({
         message: "Create new account successfully!",
         duration: 0.25,
-        onClose: () => navigate("/"),
+        onClose: () => navigate("/auth/login"),
       });
     } catch (error: any) {
       setIsLoading(false);
-      console.log(error);
       notification.error({
-        message: error.message,
+        message: error.response.data.message,
       });
     }
   };

@@ -20,24 +20,20 @@ const hashStorage: StateStorage = {
 };
 
 type State = {
-  token: string;
   profile: any;
 };
 
 type Action = {
-  setToken: (token: string) => void;
   setProfile: (profile: any) => void;
-  resetToken: () => void;
+  reset: () => void;
 };
 
 export const useAuthStore = create(
   persist<State & Action>(
     (set) => ({
-      token: "",
       profile: null,
-      setToken: (token: string) => set((state) => ({ token })),
       setProfile: (profile: any) => set((state) => ({ profile })),
-      resetToken: () => set({ token: "", profile: null }),
+      reset: () => set({ profile: null }),
     }),
     {
       name: "auth", // unique name
