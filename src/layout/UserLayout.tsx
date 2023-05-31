@@ -1,20 +1,19 @@
 import { Layout } from "antd";
-import React, { useContext } from "react";
+import React from "react";
 import Header from "./Header";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { AuthContext } from "@/context/AuthProvider";
 
 const UserLayout: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
-  const { loggedIn } = useContext(AuthContext) as any;
+  const loggedIn = useAuthStore((state) => state.loggedIn);
 
   return loggedIn && profile.role === "user" ? (
     <Layout>
-      <Layout.Header>
+      <Layout.Header className="flex items-center px-6 bg-white border-0 border-b-2 border-solid border-neutral-100">
         <Header />
       </Layout.Header>
-      <Layout.Content>
+      <Layout.Content className="bg-white">
         <Outlet />
       </Layout.Content>
     </Layout>

@@ -33,7 +33,6 @@ export default function initRequest() {
 
   axiosInstance.interceptors.response.use(
     (res: any) => {
-      console.log(res.data);
       return res.data;
     },
     async (error: any) => {

@@ -24,7 +24,7 @@ const NotFoundPage: React.FunctionComponent = () => {
           type="primary"
           size="large"
           className="bg-primary"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/auth/login")}
         >
           <HomeOutlined />
           <span>Back to home</span>

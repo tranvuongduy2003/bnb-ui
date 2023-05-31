@@ -1,16 +1,6 @@
 import validator from "@/utils/validateImage";
-import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
-import {
-  Col,
-  Form,
-  Input,
-  Modal,
-  Row,
-  Select,
-  Typography,
-  Upload,
-  message,
-} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { Col, Form, Input, Modal, Row, Select, Upload, message } from "antd";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
 import React, { useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
@@ -25,12 +15,11 @@ const ProductModal: React.FunctionComponent<IProductModalProps> = ({
   show,
   setShow,
 }) => {
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [form] = Form.useForm();
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
 
   const onChangeFile: UploadProps["onChange"] = async ({ fileList }) => {
     setFileList(fileList);
-    console.log(fileList);
   };
 
   const beforeUploadFile = (file: RcFile) => {

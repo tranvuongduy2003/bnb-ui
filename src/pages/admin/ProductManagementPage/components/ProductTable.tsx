@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, InputRef, Space, Table } from "antd";
+import { Button, Input, InputRef, Rate, Space, Table } from "antd";
 import {
   ColumnType,
   ColumnsType,
@@ -248,6 +248,9 @@ const ProductTable: React.FunctionComponent = () => {
       width: "10%",
       sorter: (a: any, b: any) => a - b,
       sortDirections: ["descend", "ascend"],
+      render: (value, record, index) => (
+        <Rate allowHalf disabled defaultValue={value} />
+      ),
     },
     {
       title: "",

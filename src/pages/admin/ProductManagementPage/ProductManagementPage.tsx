@@ -4,7 +4,7 @@ import SummaryCard from "./components/SummaryCard";
 import ProductTable from "./components/ProductTable";
 import ProductModal from "./components/ProductModal";
 
-const ProductsManagementPage: React.FunctionComponent = () => {
+const ProductManagementPage: React.FunctionComponent = () => {
   const [show, setShow] = useState<boolean>(false);
 
   return (
@@ -56,4 +56,4 @@ const ProductsManagementPage: React.FunctionComponent = () => {
   );
 };
 
-export default ProductsManagementPage;
+export default ProductManagementPage;

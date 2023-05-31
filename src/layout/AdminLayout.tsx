@@ -1,21 +1,20 @@
 import { Layout } from "antd";
-import React, { useContext } from "react";
+import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import AdminHeader from "./AdminHeader";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { AuthContext } from "@/context/AuthProvider";
 
 const AdminLayout: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
-  const { loggedIn } = useContext(AuthContext) as any;
+  const loggedIn = useAuthStore((state) => state.loggedIn);
 
-  return loggedIn && profile.role === "user" ? (
+  return loggedIn && profile.role === "admin" ? (
     <Layout>
-      <Layout.Sider className="!fixed top-0 w-52 h-screen">
+      <Layout.Sider className="!fixed top-0 !w-64 !max-w-full h-screen">
         <Sidebar />
       </Layout.Sider>
-      <Layout className="pl-[200px]">
+      <Layout className="pl-[256px]">
         <Layout.Header className="flex items-center justify-end gap-5 px-5 mb-[1px] bg-white">
           <AdminHeader />
         </Layout.Header>
