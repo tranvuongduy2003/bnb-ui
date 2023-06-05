@@ -3,7 +3,7 @@ import React from "react";
 
 interface ISummaryCardProps {
   title: string;
-  value: string;
+  value: string | number;
   percentage: number;
 }
 
@@ -18,7 +18,7 @@ const SummaryCard: React.FunctionComponent<ISummaryCardProps> = ({
         <span className="text-sm font-medium">{title}</span>
       </div>
       <div>
-        <span className="text-3xl">{value}</span>
+        <span className="text-3xl text-[#1091F4FF]">{value}</span>
       </div>
       <div className="flex gap-x-2">
         <span className="text-[#14923EFF]">

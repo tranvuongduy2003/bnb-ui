@@ -1,3 +1,4 @@
+import { IProduct } from "@/interfaces/IProduct";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, InputRef, Rate, Space, Table } from "antd";
 import {
@@ -7,72 +8,20 @@ import {
 } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
+import CategoryTag from "@/components/CategoryTag";
+import EditProductModal from "./EditProductModal";
+import { useProductStore } from "@/stores/useProductStore";
 
-interface DataType {
-  key: string;
-  name: string;
-  desc: string;
-  brand: string;
-  category: string[];
-  price: number;
-  sold: number;
-  stock: number;
-  rating: number;
-}
-
-type DataIndex = keyof DataType;
-
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "Elizabeth Lopez",
-    desc: "Laboris ut minim",
-    brand: "Elizabeth",
-    category: ["perfume", "women"],
-    price: 356000,
-    sold: 10,
-    stock: 58,
-    rating: 4,
-  },
-  {
-    key: "2",
-    name: "Matthew Martinez",
-    desc: "Nostrud incididu",
-    brand: "Matthew",
-    category: ["perfume"],
-    price: 55000,
-    sold: 57,
-    stock: 47,
-    rating: 4,
-  },
-  {
-    key: "3",
-    name: "Elizabeth Hall",
-    desc: "Culpa irure irure",
-    brand: "Elizabeth",
-    category: ["perfume"],
-    price: 609000,
-    sold: 88,
-    stock: 18,
-    rating: 4,
-  },
-  {
-    key: "4",
-    name: "Maria White",
-    desc: "Consequat amet",
-    brand: "Maria",
-    category: ["perfume", "men"],
-    price: 571000,
-    sold: 49,
-    stock: 84,
-    rating: 4,
-  },
-];
+type DataIndex = keyof IProduct;
 
 const ProductTable: React.FunctionComponent = () => {
+  const [show, setShow] = useState<boolean>(false);
+  const [edittedProduct, setEdittedProduct] = useState<IProduct>();
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
+
+  const products = useProductStore((state) => state.products);
 
   const handleSearch = (
     selectedKeys: string[],
@@ -91,7 +40,7 @@ const ProductTable: React.FunctionComponent = () => {
 
   const getColumnSearchProps = (
     dataIndex: DataIndex
-  ): ColumnType<DataType> => ({
+  ): ColumnType<IProduct> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -180,7 +129,7 @@ const ProductTable: React.FunctionComponent = () => {
       ),
   });
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<IProduct> = [
     {
       title: "Name",
       dataIndex: "name",
@@ -200,16 +149,21 @@ const ProductTable: React.FunctionComponent = () => {
     },
     {
       title: "Brand",
-      dataIndex: "brand",
-      key: "brand",
+      dataIndex: "brandName",
+      key: "brandName",
       width: "10%",
-      ...getColumnSearchProps("brand"),
+      ...getColumnSearchProps("brandName"),
     },
     {
       title: "Category",
       dataIndex: "category",
       key: "category",
-      width: "15%",
+      width: "10%",
+      render: (value, record, index) => (
+        <div>
+          <CategoryTag value={record.categories_id} />
+        </div>
+      ),
     },
     {
       title: "Price",
@@ -240,12 +194,13 @@ const ProductTable: React.FunctionComponent = () => {
       width: "5%",
       sorter: (a: any, b: any) => a - b,
       sortDirections: ["descend", "ascend"],
+      render: (value, record, index) => record.quantity - record.sold,
     },
     {
       title: "Rating",
       dataIndex: "rating",
       key: "rating",
-      width: "10%",
+      width: "15%",
       sorter: (a: any, b: any) => a - b,
       sortDirections: ["descend", "ascend"],
       render: (value, record, index) => (
@@ -258,25 +213,35 @@ const ProductTable: React.FunctionComponent = () => {
       key: "edit",
       width: "5%",
       render: (value, record, index) => (
-        <span className="cursor-pointer text-primary">Edit</span>
+        <span
+          className="cursor-pointer text-primary"
+          onClick={() => {
+            setEdittedProduct(record);
+            setShow(true);
+          }}
+        >
+          Edit
+        </span>
       ),
     },
   ];
 
   return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      pagination={{
-        onChange: (page) => {
-          console.log(page);
-        },
-        pageSize: 6,
-        position: ["bottomCenter"],
-      }}
-      scroll={{ x: true }}
-      className="mb-10"
-    />
+    <>
+      <Table
+        columns={columns}
+        dataSource={products}
+        pagination={{
+          pageSize: 6,
+          position: ["bottomCenter"],
+        }}
+        scroll={{ x: true }}
+        className="mb-10"
+      />
+      {show && edittedProduct && (
+        <EditProductModal show={show} setShow={setShow} data={edittedProduct} />
+      )}
+    </>
   );
 };
 

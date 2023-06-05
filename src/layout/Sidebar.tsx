@@ -48,7 +48,7 @@ const Sidebar: React.FunctionComponent = () => {
   const location = useLocation();
 
   return (
-    <div className="w-full h-full px-10 bg-white shadow-sm py-11">
+    <div className="w-full h-full px-10 bg-white border-0 border-r-2 border-solid border-neutral-100 py-11">
       <div className="flex mb-7 gap-x-3">
         <div
           className="cursor-pointer"

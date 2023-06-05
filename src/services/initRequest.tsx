@@ -1,4 +1,8 @@
-// import { getAccessToken, getRefreshToken, refreshToken } from "@/utils/auth";
+import {
+  getAccessToken,
+  getRefreshToken,
+  handleRefreshToken,
+} from "@/utils/auth";
 import axios, {
   AxiosRequestConfig,
   AxiosError,
@@ -17,13 +21,13 @@ export type IConfig = AxiosRequestConfig;
 
 export const axiosInstance = axios.create(requestConfig);
 
-export default function initRequest() {
+export default function initRequest(logOut: any) {
   axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-      // const accessToken = getAccessToken();
-      // if (accessToken && config.headers) {
-      //   config.headers.Authorization = `Bearer ${accessToken}`;
-      // }
+      const token = getAccessToken();
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
       return config;
     },
     (error: AxiosError) => {
@@ -39,36 +43,40 @@ export default function initRequest() {
       const statusCode = error.response?.data?.statusCode;
       const originalConfig = error.config;
 
-      // switch (statusCode) {
-      //   case 401: {
-      //     const rfToken = getRefreshToken();
-      //     if (!originalConfig._retry && rfToken) {
-      //       originalConfig._retry = true;
-      //       try {
-      //         console.log("retry");
-      //         const accessToken = await refreshToken();
-      //         axios.defaults.headers.common = {
-      //           "Content-Type": "application/json",
-      //           Authorization: `Bearer ${accessToken}`,
-      //         };
-      //         return axiosInstance(originalConfig);
-      //       } catch (error: any) {
-      //         logOut();
-      //       }
-      //     } else {
-      //       logOut();
-      //     }
-      //     break;
-      //   }
-      //   case 500: {
-      //     break;
-      //   }
-      //   default:
-      //     break;
-      // }
+      switch (statusCode) {
+        case 401: {
+          const rfToken = getRefreshToken();
+          if (!originalConfig._retry && rfToken) {
+            originalConfig._retry = true;
+            try {
+              console.log("retry");
+              const token = await handleRefreshToken();
+              axios.defaults.headers.common = {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              };
+              return axiosInstance(originalConfig);
+            } catch (error: any) {
+              logOut();
+            }
+          } else {
+            logOut();
+          }
+          break;
+        }
+        case 403: {
+          logOut();
+          break;
+        }
+        case 500: {
+          break;
+        }
+        default:
+          break;
+      }
       return Promise.reject(error.response?.data);
     }
   );
 }
 
-initRequest();
+// initRequest();

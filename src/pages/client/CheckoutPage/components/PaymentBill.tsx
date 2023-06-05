@@ -102,7 +102,7 @@ const PaymentBill: React.FunctionComponent = () => {
             size="large"
             onClick={() =>
               navigate("/checkout/confirmation", {
-                state: { status: "failed" },
+                state: { status: "success" },
               })
             }
           >

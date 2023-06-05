@@ -14,7 +14,7 @@ const Header: React.FunctionComponent = () => {
   const location = useLocation();
 
   const [open, setOpen] = useState<boolean>(false);
-  const { logout } = useContext(AuthContext) as any;
+  const { logOut } = useContext(AuthContext) as any;
 
   // const items: MenuProps["items"] = [
   //   {
@@ -43,7 +43,7 @@ const Header: React.FunctionComponent = () => {
       key: "logout",
       icon: <LogoutOutlined />,
       onClick: () => {
-        logout();
+        logOut();
         setOpen(!open);
       },
       label: "Logout",

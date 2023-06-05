@@ -11,6 +11,9 @@ import Highlighter from "react-highlight-words";
 interface DataType {
   key: string;
   name: string;
+  avatar: string;
+  position: string;
+  isActive: boolean;
   phone: string;
   email: string;
   last_visit: Date;
@@ -24,6 +27,9 @@ const data: DataType[] = [
   {
     key: "1",
     name: "Ashley Lopez",
+    avatar: "https://picsum.photos/200",
+    position: "Fashion Designer",
+    isActive: true,
     phone: "(212) 535-8263",
     email: "jacobjackson1988@yahoo.com",
     last_visit: new Date("Feb 06, 2022"),
@@ -33,6 +39,9 @@ const data: DataType[] = [
   {
     key: "2",
     name: "Andrea Sanchez",
+    avatar: "https://picsum.photos/200",
+    position: "Fashion Designer",
+    isActive: true,
     phone: "(845) 732-4788",
     email: "jking@hotmail.com",
     last_visit: new Date("Oct 08, 2021"),
@@ -42,6 +51,9 @@ const data: DataType[] = [
   {
     key: "3",
     name: "Brian Scott",
+    avatar: "https://picsum.photos/200",
+    position: "Fashion Designer",
+    isActive: true,
     phone: "(719) 810-7869",
     email: "ehall@hotmail.com",
     last_visit: new Date("Sep 27, 2022"),
@@ -51,6 +63,9 @@ const data: DataType[] = [
   {
     key: "4",
     name: "Jaime Jimenez",
+    avatar: "https://picsum.photos/200",
+    position: "Fashion Designer",
+    isActive: false,
     phone: "(619) 656-7396",
     email: "bmartinez@yahoo.com",
     last_visit: new Date("Apr 14, 2021"),
@@ -178,7 +193,19 @@ const ClientTable: React.FunctionComponent = () => {
       width: "20%",
       ...getColumnSearchProps("name"),
       render: (value, record, index) => (
-        <span className="font-medium">{value}</span>
+        <div className="flex items-center gap-7">
+          <div>
+            <img
+              src={record.avatar}
+              alt="avatar"
+              className="rounded-full w-9 h-9"
+            />
+          </div>
+          <div className="flex flex-col gap-[2px]">
+            <span className="text-sm font-medium">{record.name}</span>
+            <span className="text-xs text-neutral-600">{record.position}</span>
+          </div>
+        </div>
       ),
     },
     {
@@ -213,20 +240,33 @@ const ClientTable: React.FunctionComponent = () => {
       key: "total_paid",
       width: "15%",
       render: (value, record, index) => (
-        <span>{`${new Intl.NumberFormat("vi-VN", {
-          style: "currency",
-          currency: "VND",
-        }).format(value)}`}</span>
+        <div className="flex flex-col gap-[2px]">
+          <span className="text-sm">{`${new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value)}`}</span>
+          <span className="text-xs text-neutral-600">{record.quantity}</span>
+        </div>
       ),
     },
     {
-      title: "",
-      dataIndex: "edit",
-      key: "edit",
+      title: "Activate",
+      key: "isActive",
+      dataIndex: "isActive",
       width: "10%",
-      render: (value, record, index) => (
-        <span className="cursor-pointer text-primary">Edit</span>
-      ),
+      render: (value, record, index) =>
+        value ? (
+          <Button
+            danger
+            className="hover:!border-red-500 hover:!text-white hover:!bg-red-500 w-full"
+          >
+            Deactivate
+          </Button>
+        ) : (
+          <Button className="w-full text-green-600 border-green-600 hover:!border-green-600 hover:!text-white hover:!bg-green-600">
+            Activate
+          </Button>
+        ),
     },
   ];
 

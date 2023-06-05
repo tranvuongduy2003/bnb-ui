@@ -19,8 +19,10 @@ const LoginPage: React.FunctionComponent = () => {
   return (
     <Row className="h-screen p-0 m-0">
       <Col span={12} className="bg-white">
-        <Row justify={"space-between"} className="px-12 pt-14">
-          <Col>Logo</Col>
+        <Row justify={"space-between"} align={"middle"} className="px-12 pt-14">
+          <Col>
+            <img src="/assets/logo.png" alt="logo" />
+          </Col>
           <Col>
             <span>Don't you have an account? </span>
             <span

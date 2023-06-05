@@ -9,10 +9,6 @@ export const signUp = (data: any) => {
   return httpRequest.post("/auth/signup", data);
 };
 
-export const logOut = () => {
-  return httpRequest.post("/auth/logout", {});
-};
-
 export const getUserProfile = () => {
   return httpRequest.get("/auth/user");
 };
