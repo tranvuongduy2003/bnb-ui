@@ -8,6 +8,7 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { AuthContext } from "@/context/AuthProvider";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const Header: React.FunctionComponent = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Header: React.FunctionComponent = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const { logOut } = useContext(AuthContext) as any;
+  const profile = useAuthStore((state) => state.profile);
 
   // const items: MenuProps["items"] = [
   //   {
@@ -97,7 +99,9 @@ const Header: React.FunctionComponent = () => {
             onOpenChange={() => setOpen(!open)}
           >
             <Avatar
-              src="https://picsum.photos/200"
+              src={
+                profile.avatar ? profile.avatar : "https://picsum.photos/200"
+              }
               size={36}
               className="cursor-pointer"
             />

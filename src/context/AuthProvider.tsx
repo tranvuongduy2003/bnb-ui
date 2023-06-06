@@ -73,7 +73,7 @@ const AuthProvider = ({ children }: any) => {
   return (
     <AuthContext.Provider
       value={{
-        logOut,
+        logOut: logOut.current,
         logIn,
       }}
     >

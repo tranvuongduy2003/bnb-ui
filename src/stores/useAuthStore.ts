@@ -30,7 +30,8 @@ export const useAuthStore = create(
       ...initState,
       setToken: (token: TokenPayload) => set((state) => ({ token })),
       setLoggedIn: (status: boolean) => set((state) => ({ loggedIn: status })),
-      setProfile: (profile: any) => set((state) => ({ profile })),
+      setProfile: (profile: any) =>
+        set((state) => ({ profile: { ...profile } })),
       reset: () => set({ ...initState }),
     }),
     {

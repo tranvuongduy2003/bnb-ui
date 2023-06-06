@@ -1,28 +1,47 @@
+import { updateUserProfile } from "@/apis/user.api";
 import { app } from "@/firebase";
+import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import validator from "@/utils/validateImage";
 import { EditOutlined } from "@ant-design/icons";
-import { Avatar, Form, Typography, Upload, message } from "antd";
+import {
+  Avatar,
+  Button,
+  DatePicker,
+  DatePickerProps,
+  Form,
+  Typography,
+  Upload,
+  message,
+  notification,
+} from "antd";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
+import dayjs from "dayjs";
 
 const ProfileEdit: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
+  const setProfile = useAuthStore((state) => state.setProfile);
+  const isLoading = useAppStore((state) => state.isLoading);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
   const [form] = Form.useForm();
 
   const fullnameWatch = Form.useWatch("fullname", form);
   const emailWatch = Form.useWatch("email", form);
-  const genderWatch = Form.useWatch("gender", form);
-  const dobWatch = Form.useWatch("dob", form);
   const phoneWatch = Form.useWatch("phone", form);
-  const emergencyWatch = Form.useWatch("emergency", form);
+
+  const onDateChange: DatePickerProps["onChange"] = (date, dateString) => {
+    const dob = date?.toDate();
+    setOpenDatePicker(!openDatePicker);
+    form.setFieldValue("dob", dob);
+  };
 
   const onChangeFile: UploadProps["onChange"] = async ({ fileList }) => {
     setFileList(fileList);
-    console.log(fileList);
   };
 
   const beforeUploadFile = (file: RcFile) => {
@@ -30,13 +49,60 @@ const ProfileEdit: React.FunctionComponent = () => {
     msgs.map((msg) => message.error(msg));
     return msgs.length == 0 || Upload.LIST_IGNORE;
   };
+
+  const handleUpdateProfile = async (value: any) => {
+    setIsLoading(true);
+    const { dob, fullname, phone } = value;
+    let payload = {};
+    if (dob) {
+      payload = { ...payload, dob };
+    }
+    if (fullname) {
+      payload = { ...payload, fullname };
+    }
+    if (phone) {
+      payload = { ...payload, phone };
+    }
+    if (fileList && fileList.length > 0) {
+      const storage = getStorage(app);
+      const storageRef = ref(storage, `avatars/${fileList[0].name}`);
+      await uploadBytes(storageRef, fileList[0].originFileObj as Blob);
+      const imageURL = await getDownloadURL(storageRef);
+      payload = { ...payload, avatar: imageURL };
+    }
+
+    try {
+      console.log(payload);
+      const { data } = await updateUserProfile(payload);
+      console.log(data);
+      setProfile(data);
+      setIsLoading(false);
+      notification.success({
+        message: "Update profile successfully!",
+      });
+    } catch (error: any) {
+      console.log(error);
+      setIsLoading(false);
+      notification.error({
+        message: error.message,
+      });
+    }
+  };
+
   return (
-    <Form form={form} labelCol={{ span: 24 }} className="w-full">
+    <Form
+      form={form}
+      labelCol={{ span: 24 }}
+      className="w-full"
+      onFinish={handleUpdateProfile}
+    >
       <Form.Item className="relative w-[138px] mx-auto">
         <Avatar
           src={
             fileList?.length > 0
               ? URL.createObjectURL(fileList[0].originFileObj as any)
+              : profile.avatar
+              ? profile.avatar
               : "https://picsum.photos/200"
           }
           size={138}
@@ -79,52 +145,28 @@ const ProfileEdit: React.FunctionComponent = () => {
         label={<span className="text-sm font-medium">Email</span>}
         initialValue={profile.email}
       >
-        <Typography.Text
-          editable={{
-            icon: (
-              <span className="text-sm underline text-neutral-700">Edit</span>
-            ),
-            onChange: (value) => form.setFieldValue("email", value),
-          }}
-          className="flex justify-between"
-        >
+        <Typography.Text className="flex justify-between">
           {emailWatch || <span className="text-neutral-400">Not provided</span>}
         </Typography.Text>
       </Form.Item>
-      {/* <Form.Item
-        name="gender"
-        label={<span className="text-sm font-medium">Gender</span>}
-      >
-        <Typography.Text
-          editable={{
-            icon: (
-              <span className="text-sm underline text-neutral-700">Edit</span>
-            ),
-            onChange: (value) => form.setFieldValue("gender", value),
-          }}
-          className="flex justify-between"
-        >
-          {genderWatch || (
-            <span className="text-neutral-400">Not provided</span>
-          )}
-        </Typography.Text>
-      </Form.Item> */}
       <Form.Item
         name="dob"
         label={<span className="text-sm font-medium">Date of birth</span>}
-        initialValue={profile.dob}
       >
-        <Typography.Text
-          editable={{
-            icon: (
-              <span className="text-sm underline text-neutral-700">Edit</span>
-            ),
-            onChange: (value) => form.setFieldValue("dob", value),
-          }}
-          className="flex justify-between"
+        <DatePicker
+          defaultValue={dayjs(profile.dob)}
+          open={openDatePicker}
+          disabled={!openDatePicker}
+          onChange={onDateChange}
+          showToday={false}
+          bordered={false}
+        />
+        <span
+          className="float-right text-sm underline cursor-pointer text-neutral-700"
+          onClick={() => setOpenDatePicker(!openDatePicker)}
         >
-          {dobWatch || <span className="text-neutral-400">Not provided</span>}
-        </Typography.Text>
+          Edit
+        </span>
       </Form.Item>
       <Form.Item
         name="phone"
@@ -142,6 +184,16 @@ const ProfileEdit: React.FunctionComponent = () => {
         >
           {phoneWatch || <span className="text-neutral-400">Not provided</span>}
         </Typography.Text>
+      </Form.Item>
+      <Form.Item>
+        <Button
+          loading={isLoading}
+          htmlType="submit"
+          type="primary"
+          className="float-right bg-primary"
+        >
+          Save
+        </Button>
       </Form.Item>
     </Form>
   );

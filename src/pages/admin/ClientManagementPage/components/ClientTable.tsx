@@ -1,3 +1,5 @@
+import { IUser } from "@/interfaces/IUser";
+import { useClientStore } from "@/stores/useClientStore";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, InputRef, Space, Table } from "antd";
 import {
@@ -8,76 +10,15 @@ import {
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 
-interface DataType {
-  key: string;
-  name: string;
-  avatar: string;
-  position: string;
-  isActive: boolean;
-  phone: string;
-  email: string;
-  last_visit: Date;
-  total_paid: number;
-  quantity: number;
-}
-
-type DataIndex = keyof DataType;
-
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "Ashley Lopez",
-    avatar: "https://picsum.photos/200",
-    position: "Fashion Designer",
-    isActive: true,
-    phone: "(212) 535-8263",
-    email: "jacobjackson1988@yahoo.com",
-    last_visit: new Date("Feb 06, 2022"),
-    total_paid: 880000,
-    quantity: 13,
-  },
-  {
-    key: "2",
-    name: "Andrea Sanchez",
-    avatar: "https://picsum.photos/200",
-    position: "Fashion Designer",
-    isActive: true,
-    phone: "(845) 732-4788",
-    email: "jking@hotmail.com",
-    last_visit: new Date("Oct 08, 2021"),
-    total_paid: 621000,
-    quantity: 13,
-  },
-  {
-    key: "3",
-    name: "Brian Scott",
-    avatar: "https://picsum.photos/200",
-    position: "Fashion Designer",
-    isActive: true,
-    phone: "(719) 810-7869",
-    email: "ehall@hotmail.com",
-    last_visit: new Date("Sep 27, 2022"),
-    total_paid: 117000,
-    quantity: 53,
-  },
-  {
-    key: "4",
-    name: "Jaime Jimenez",
-    avatar: "https://picsum.photos/200",
-    position: "Fashion Designer",
-    isActive: false,
-    phone: "(619) 656-7396",
-    email: "bmartinez@yahoo.com",
-    last_visit: new Date("Apr 14, 2021"),
-    total_paid: 869000,
-    quantity: 96,
-  },
-];
+type DataIndex = keyof IUser;
 
 const ClientTable: React.FunctionComponent = () => {
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
+
+  const clients = useClientStore((state) => state.clients);
+  const filteredClients = useClientStore((state) => state.filteredClients);
 
   const handleSearch = (
     selectedKeys: string[],
@@ -94,9 +35,7 @@ const ClientTable: React.FunctionComponent = () => {
     setSearchText("");
   };
 
-  const getColumnSearchProps = (
-    dataIndex: DataIndex
-  ): ColumnType<DataType> => ({
+  const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<IUser> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -185,13 +124,13 @@ const ClientTable: React.FunctionComponent = () => {
       ),
   });
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<IUser> = [
     {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "fullname",
+      key: "fullname",
       width: "20%",
-      ...getColumnSearchProps("name"),
+      ...getColumnSearchProps("fullname"),
       render: (value, record, index) => (
         <div className="flex items-center gap-7">
           <div>
@@ -202,8 +141,7 @@ const ClientTable: React.FunctionComponent = () => {
             />
           </div>
           <div className="flex flex-col gap-[2px]">
-            <span className="text-sm font-medium">{record.name}</span>
-            <span className="text-xs text-neutral-600">{record.position}</span>
+            <span className="text-sm font-medium">{record.fullname}</span>
           </div>
         </div>
       ),
@@ -245,7 +183,7 @@ const ClientTable: React.FunctionComponent = () => {
             style: "currency",
             currency: "VND",
           }).format(value)}`}</span>
-          <span className="text-xs text-neutral-600">{record.quantity}</span>
+          {/* <span className="text-xs text-neutral-600">{record.quantity}</span> */}
         </div>
       ),
     },
@@ -273,7 +211,7 @@ const ClientTable: React.FunctionComponent = () => {
   return (
     <Table
       columns={columns}
-      dataSource={data}
+      dataSource={filteredClients.length > 0 ? filteredClients : clients}
       pagination={{
         onChange: (page) => {
           console.log(page);

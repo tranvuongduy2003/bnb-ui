@@ -1,4 +1,5 @@
 import { AuthContext } from "@/context/AuthProvider";
+import { useAuthStore } from "@/stores/useAuthStore";
 import {
   BellOutlined,
   LogoutOutlined,
@@ -12,7 +13,8 @@ const AdminHeader: React.FunctionComponent = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
 
-  const { logout } = useContext(AuthContext) as any;
+  const { logOut } = useContext(AuthContext) as any;
+  const profile = useAuthStore((state) => state.profile);
 
   const items: MenuProps["items"] = [
     {
@@ -28,7 +30,7 @@ const AdminHeader: React.FunctionComponent = () => {
       key: "logout",
       icon: <LogoutOutlined />,
       onClick: () => {
-        logout();
+        logOut();
         setOpen(!open);
       },
       label: "Logout",
@@ -56,7 +58,7 @@ const AdminHeader: React.FunctionComponent = () => {
           onOpenChange={() => setOpen(!open)}
         >
           <Avatar
-            src="https://picsum.photos/200"
+            src={profile.avatar ? profile.avatar : "https://picsum.photos/200"}
             size={36}
             className="cursor-pointer"
           />
