@@ -2,6 +2,7 @@ import {
   getAccessToken,
   getRefreshToken,
   handleRefreshToken,
+  logOut,
 } from "@/utils/auth";
 import axios, {
   AxiosRequestConfig,
@@ -21,7 +22,7 @@ export type IConfig = AxiosRequestConfig;
 
 export const axiosInstance = axios.create(requestConfig);
 
-export default function initRequest(logOut: any) {
+export default function initRequest() {
   axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
       const token = getAccessToken();
@@ -79,4 +80,4 @@ export default function initRequest(logOut: any) {
   );
 }
 
-// initRequest();
+initRequest();

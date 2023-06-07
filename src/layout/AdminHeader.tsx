@@ -1,19 +1,18 @@
-import { AuthContext } from "@/context/AuthProvider";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { logOut } from "@/utils/auth";
 import {
   BellOutlined,
   LogoutOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
 import { Avatar, Menu, MenuProps, Popover } from "antd";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AdminHeader: React.FunctionComponent = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState<boolean>(false);
 
-  const { logOut } = useContext(AuthContext) as any;
   const profile = useAuthStore((state) => state.profile);
 
   const items: MenuProps["items"] = [
@@ -38,33 +37,28 @@ const AdminHeader: React.FunctionComponent = () => {
   ];
 
   return (
-    <>
-      <div className="text-xl">
-        <BellOutlined />
-      </div>
-      <div>
-        <Popover
-          content={
-            <Menu
-              mode="vertical"
-              items={items}
-              className="!border-none"
-              selectedKeys={[""]}
-            />
-          }
-          trigger="click"
-          placement="bottomLeft"
-          open={open}
-          onOpenChange={() => setOpen(!open)}
-        >
-          <Avatar
-            src={profile.avatar ? profile.avatar : "https://picsum.photos/200"}
-            size={36}
-            className="cursor-pointer"
+    <div>
+      <Popover
+        content={
+          <Menu
+            mode="vertical"
+            items={items}
+            className="!border-none"
+            selectedKeys={[""]}
           />
-        </Popover>
-      </div>
-    </>
+        }
+        trigger="click"
+        placement="bottomLeft"
+        open={open}
+        onOpenChange={() => setOpen(!open)}
+      >
+        <Avatar
+          src={profile?.avatar ? profile.avatar : "https://picsum.photos/200"}
+          size={36}
+          className="cursor-pointer"
+        />
+      </Popover>
+    </div>
   );
 };
 

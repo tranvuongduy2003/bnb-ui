@@ -2,10 +2,15 @@ import { ShoppingCartOutlined } from "@ant-design/icons";
 import { Typography } from "antd";
 import React from "react";
 import OrdersTable from "./OrdersTable";
+import { ICart } from "@/interfaces/ICart";
 
-// interface IOrderSummaryProps {}
+interface IOrderSummaryProps {
+  data: ICart[];
+}
 
-const OrderSummary: React.FunctionComponent = () => {
+const OrderSummary: React.FunctionComponent<IOrderSummaryProps> = ({
+  data,
+}) => {
   return (
     <div className="border border-solid rounded p-7 border-neutral-200">
       <Typography.Title
@@ -16,7 +21,7 @@ const OrderSummary: React.FunctionComponent = () => {
         <ShoppingCartOutlined />
         <span>Order summary</span>
       </Typography.Title>
-      <OrdersTable />
+      <OrdersTable data={data} />
     </div>
   );
 };

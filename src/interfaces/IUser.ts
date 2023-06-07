@@ -4,6 +4,8 @@ export interface IUser {
   password: string;
   fullname: string;
   phone?: string;
+  orderCount?: number;
+  totalPayment?: number | string;
   dob?: string | Date;
   isActive: boolean;
   role: string;

@@ -6,6 +6,8 @@ import { getAllProducts } from "@/apis/product.api";
 import AddProductModal from "./components/AddProductModal";
 import { useAppStore } from "@/stores/useAppStore";
 import { useProductStore } from "@/stores/useProductStore";
+import { useCategoriesStore } from "@/stores/useCategoryStore";
+import { getAllCategories } from "@/apis/category.api";
 
 const ProductManagementPage: React.FunctionComponent = () => {
   const [show, setShow] = useState<boolean>(false);
@@ -15,13 +17,18 @@ const ProductManagementPage: React.FunctionComponent = () => {
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const products = useProductStore((state) => state.products);
   const setProducts = useProductStore((state) => state.setProducts);
+  const categories = useCategoriesStore((state) => state.categories);
+  const setCategories = useCategoriesStore((state) => state.setCategories);
 
   useEffect(() => {
     fetchProductData.current = async () => {
       setIsLoading(true);
       try {
-        const { data } = await getAllProducts();
-        setProducts(data.data);
+        const { data: productData } = await getAllProducts();
+        const { data: categoryData } = await getAllCategories();
+
+        setProducts(productData);
+        setCategories(categoryData);
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
@@ -71,11 +78,17 @@ const ProductManagementPage: React.FunctionComponent = () => {
                 currency: "VND",
               }).format(
                 products
-                  .map((item) => item.price * item.quantity)
-                  .reduce(
-                    (accumulator, currentValue) => accumulator + currentValue,
-                    0
-                  )
+                  ? products
+                      .map(
+                        (item) =>
+                          JSON.parse(item.price as string) * item.inventory
+                      )
+                      .reduce(
+                        (accumulator, currentValue) =>
+                          accumulator + currentValue,
+                        0
+                      )
+                  : 0
               )}`}
               percentage={22}
             />
@@ -83,7 +96,7 @@ const ProductManagementPage: React.FunctionComponent = () => {
           <Col span={6}>
             <SummaryCard
               title="Number of categories"
-              value={2}
+              value={categories.length}
               percentage={67}
             />
           </Col>
@@ -94,7 +107,9 @@ const ProductManagementPage: React.FunctionComponent = () => {
       {!isLoading ? (
         <ProductTable />
       ) : (
-        <Spin spinning={isLoading} size="large" />
+        <div className="flex justify-center w-full">
+          <Spin spinning={isLoading} size="large" />
+        </div>
       )}
 
       <AddProductModal show={show} setShow={setShow} />

@@ -3,8 +3,11 @@ import { Col, Row, Typography } from "antd";
 import ProfileEdit from "./components/ProfileEdit";
 import ChangePassword from "./components/ChangePassword";
 import Deactivate from "./components/Deactivate";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { Role } from "@/constants/role";
 
 const SettingsPage: React.FunctionComponent = (props) => {
+  const profile = useAuthStore((state) => state.profile);
   //   const handleAddNewProduct = async (values: any) => {
   //     const { images, ...rest } = values;
   //     const storage = getStorage(app);
@@ -20,7 +23,7 @@ const SettingsPage: React.FunctionComponent = (props) => {
   //   };
 
   return (
-    <div className="py-6 px-36">
+    <div className={`${profile.role === Role.ADMIN ? "px-36" : "px-80"} py-6`}>
       <Row>
         <Typography.Title level={2} style={{ margin: 0 }}>
           Settings
@@ -29,26 +32,30 @@ const SettingsPage: React.FunctionComponent = (props) => {
       <Row justify={"center"}>
         <ProfileEdit />
       </Row>
-      <Row className="my-10">
-        <Col span={8}>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            Change Password
-          </Typography.Title>
-        </Col>
-        <Col span={16}>
-          <ChangePassword />
-        </Col>
-      </Row>
-      <Row>
-        <Col span={8}>
-          <Typography.Title level={3} style={{ margin: 0 }}>
-            Deactivate
-          </Typography.Title>
-        </Col>
-        <Col span={16}>
-          <Deactivate />
-        </Col>
-      </Row>
+      {profile.role === Role.ADMIN && (
+        <>
+          <Row className="my-10">
+            <Col span={8}>
+              <Typography.Title level={3} style={{ margin: 0 }}>
+                Change Password
+              </Typography.Title>
+            </Col>
+            <Col span={16}>
+              <ChangePassword />
+            </Col>
+          </Row>
+          <Row>
+            <Col span={8}>
+              <Typography.Title level={3} style={{ margin: 0 }}>
+                Deactivate
+              </Typography.Title>
+            </Col>
+            <Col span={16}>
+              <Deactivate />
+            </Col>
+          </Row>
+        </>
+      )}
     </div>
   );
 };

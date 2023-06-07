@@ -1,21 +1,28 @@
 import {
+  AimOutlined,
   CalendarOutlined,
   CloseOutlined,
   ContainerOutlined,
+  PhoneOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import React from "react";
 import Field from "./Field";
 import OrderItem from "./OrderItem";
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
 interface IOrderInformationProps {
+  data: any;
   status: string;
 }
 
 const OrderInformation: React.FunctionComponent<IOrderInformationProps> = ({
+  data,
   status,
 }) => {
+  const navigate = useNavigate();
+
   return (
     <div className="w-full p-6 rounded shadow-md">
       <div className="flex flex-col gap-6 pb-6 border-0 border-b border-solid border-neutral-300">
@@ -24,7 +31,21 @@ const OrderInformation: React.FunctionComponent<IOrderInformationProps> = ({
           title="Date"
           value={new Date().toLocaleDateString("vi-VN")}
         />
-        <Field icon={<UserOutlined />} title="Customer" value="John Miller" />
+        <Field
+          icon={<UserOutlined />}
+          title="Customer"
+          value={data.receiptName}
+        />
+        <Field
+          icon={<PhoneOutlined />}
+          title="Phone number"
+          value={data.receiptPhone}
+        />
+        <Field
+          icon={<AimOutlined />}
+          title="Address"
+          value={data.receiptAddress}
+        />
         <Field
           icon={
             <svg
@@ -50,7 +71,7 @@ const OrderInformation: React.FunctionComponent<IOrderInformationProps> = ({
         <Field
           icon={<ContainerOutlined />}
           title="Order Number"
-          value={JSON.stringify(586789963)}
+          value={JSON.stringify(data.id)}
         />
         <Field
           icon={<UserOutlined />}
@@ -61,7 +82,15 @@ const OrderInformation: React.FunctionComponent<IOrderInformationProps> = ({
                 {`${new Intl.NumberFormat("vi-VN", {
                   style: "currency",
                   currency: "VND",
-                }).format(390000)}`}
+                }).format(
+                  data.orders
+                    .map(
+                      (item: any) =>
+                        JSON.parse(item.price as string) * item.quantity
+                    )
+                    .reduce((prev: number, cur: number) => prev + cur, 0) +
+                    30000
+                )}`}
               </span>
             ) : (
               <>
@@ -72,7 +101,15 @@ const OrderInformation: React.FunctionComponent<IOrderInformationProps> = ({
                   {`${new Intl.NumberFormat("vi-VN", {
                     style: "currency",
                     currency: "VND",
-                  }).format(390000)}`}
+                  }).format(
+                    data.orders
+                      .map(
+                        (item: any) =>
+                          JSON.parse(item.price as string) * item.quantity
+                      )
+                      .reduce((prev: number, cur: number) => prev + cur, 0) +
+                      30000
+                  )}`}
                 </span>
               </>
             )
@@ -82,25 +119,25 @@ const OrderInformation: React.FunctionComponent<IOrderInformationProps> = ({
       <div className="flex flex-col gap-6 py-6">
         <span className="text-sm text-neutral-900">Order Line</span>
         <div className="flex flex-col gap-5">
-          <OrderItem
-            image="https://picsum.photos/200"
-            name="Product's name"
-            desc="Incididunt esse ea exercit"
-            quantity={1}
-            price={120000}
-          />
-          <OrderItem
-            image="https://picsum.photos/200"
-            name="Product's name"
-            desc="Incididunt esse ea exercit"
-            quantity={2}
-            price={120000}
-          />
+          {data.orders.map((order: any, index: number) => (
+            <OrderItem
+              image={order.images[0]}
+              name={order.name}
+              desc={order.desc}
+              quantity={order.quantity}
+              price={JSON.parse(order.price)}
+            />
+          ))}
         </div>
       </div>
       <div className="flex items-center justify-center gap-4">
         {status === "success" ? (
-          <Button type="primary" className="bg-primary" size="large">
+          <Button
+            onClick={() => navigate("/")}
+            type="primary"
+            className="bg-primary"
+            size="large"
+          >
             Continue shopping
           </Button>
         ) : (

@@ -2,36 +2,33 @@ import React, { useContext, useState } from "react";
 import { Avatar, Badge, Menu, MenuProps, Popover, Typography } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  BarsOutlined,
   BellOutlined,
   LogoutOutlined,
   SettingOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { AuthContext } from "@/context/AuthProvider";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { logOut } from "@/utils/auth";
+import { useCartStore } from "@/stores/useCartStore";
 
 const Header: React.FunctionComponent = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const [open, setOpen] = useState<boolean>(false);
-  const { logOut } = useContext(AuthContext) as any;
   const profile = useAuthStore((state) => state.profile);
-
-  // const items: MenuProps["items"] = [
-  //   {
-  //     key: "/",
-  //     onClick: () => navigate("/"),
-  //     label: "Home",
-  //   },
-  //   {
-  //     key: "/category",
-  //     onClick: () => navigate("/category"),
-  //     label: "Category",
-  //   },
-  // ];
+  const cart = useCartStore((state) => state.cart);
 
   const items: MenuProps["items"] = [
+    {
+      key: "/orders",
+      icon: <BarsOutlined />,
+      onClick: () => {
+        navigate("/orders");
+        setOpen(!open);
+      },
+      label: "Orders",
+    },
     {
       key: "/settings",
       icon: <SettingOutlined />,
@@ -72,7 +69,7 @@ const Header: React.FunctionComponent = () => {
         />
       </div> */}
       <div className="flex items-center gap-5">
-        <Badge count={5} size="default">
+        <Badge count={cart.length} size="default">
           <div
             className="text-xl cursor-pointer"
             onClick={() => navigate("/cart")}
@@ -80,9 +77,6 @@ const Header: React.FunctionComponent = () => {
             <ShoppingCartOutlined />
           </div>
         </Badge>
-        <div className="text-xl">
-          <BellOutlined />
-        </div>
         <div>
           <Popover
             content={
@@ -100,7 +94,7 @@ const Header: React.FunctionComponent = () => {
           >
             <Avatar
               src={
-                profile.avatar ? profile.avatar : "https://picsum.photos/200"
+                profile?.avatar ? profile.avatar : "https://picsum.photos/200"
               }
               size={36}
               className="cursor-pointer"

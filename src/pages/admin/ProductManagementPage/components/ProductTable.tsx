@@ -144,7 +144,7 @@ const ProductTable: React.FunctionComponent = () => {
       title: "Description",
       dataIndex: "desc",
       key: "desc",
-      width: "15%",
+      width: "20%",
       ...getColumnSearchProps("desc"),
     },
     {
@@ -161,8 +161,22 @@ const ProductTable: React.FunctionComponent = () => {
       width: "10%",
       render: (value, record, index) => (
         <div>
-          <CategoryTag value={record.categories_id} />
+          <CategoryTag value={record.categoryId} />
         </div>
+      ),
+    },
+    {
+      title: "Import Price",
+      dataIndex: "importPrice",
+      key: "importPrice",
+      width: "10%",
+      sorter: (a: any, b: any) => a - b,
+      sortDirections: ["descend", "ascend"],
+      render: (value, record, index) => (
+        <span>{`${new Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(value)}`}</span>
       ),
     },
     {
@@ -188,25 +202,25 @@ const ProductTable: React.FunctionComponent = () => {
       sortDirections: ["descend", "ascend"],
     },
     {
-      title: "Stock",
-      dataIndex: "stock",
-      key: "stock",
+      title: "Inventory",
+      dataIndex: "inventory",
+      key: "inventory",
       width: "5%",
       sorter: (a: any, b: any) => a - b,
       sortDirections: ["descend", "ascend"],
-      render: (value, record, index) => record.quantity - record.sold,
+      render: (value, record, index) => record.inventory - record.sold,
     },
-    {
-      title: "Rating",
-      dataIndex: "rating",
-      key: "rating",
-      width: "15%",
-      sorter: (a: any, b: any) => a - b,
-      sortDirections: ["descend", "ascend"],
-      render: (value, record, index) => (
-        <Rate allowHalf disabled defaultValue={value} />
-      ),
-    },
+    // {
+    //   title: "Rating",
+    //   dataIndex: "rating",
+    //   key: "rating",
+    //   width: "15%",
+    //   sorter: (a: any, b: any) => a - b,
+    //   sortDirections: ["descend", "ascend"],
+    //   render: (value, record, index) => (
+    //     <Rate allowHalf disabled defaultValue={value} />
+    //   ),
+    // },
     {
       title: "",
       dataIndex: "edit",
@@ -229,6 +243,7 @@ const ProductTable: React.FunctionComponent = () => {
   return (
     <>
       <Table
+        rowKey={"id"}
         columns={columns}
         dataSource={products}
         pagination={{

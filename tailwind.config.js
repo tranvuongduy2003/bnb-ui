@@ -11,6 +11,7 @@ export default {
           700: "#006D7CFF",
           DEFAULT: "#00BDD6FF",
         },
+        rating: "#F3C63FFF",
       },
     },
   },

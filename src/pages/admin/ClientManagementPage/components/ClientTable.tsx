@@ -1,3 +1,4 @@
+import UserStatucTag from "@/components/ClientStatusTag";
 import { IUser } from "@/interfaces/IUser";
 import { useClientStore } from "@/stores/useClientStore";
 import { SearchOutlined } from "@ant-design/icons";
@@ -157,20 +158,14 @@ const ClientTable: React.FunctionComponent = () => {
       title: "Email",
       dataIndex: "email",
       key: "email",
-      width: "25%",
+      width: "20%",
       ...getColumnSearchProps("email"),
     },
     {
-      title: "Last visit",
-      dataIndex: "last_visit",
-      key: "last_visit",
-      width: "15%",
-      render: (value, record, index) =>
-        value.toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }),
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      width: "10%",
     },
     {
       title: "Total paid & orders",
@@ -182,10 +177,17 @@ const ClientTable: React.FunctionComponent = () => {
           <span className="text-sm">{`${new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND",
-          }).format(value)}`}</span>
-          {/* <span className="text-xs text-neutral-600">{record.quantity}</span> */}
+          }).format(JSON.parse(record.totalPayment as string))}`}</span>
+          <span className="text-xs text-neutral-600">{record.orderCount}</span>
         </div>
       ),
+    },
+    {
+      title: "Status",
+      dataIndex: "isActive",
+      key: "isActive",
+      width: "10%",
+      render: (value, record, index) => <UserStatucTag isActive />,
     },
     {
       title: "Activate",
@@ -210,8 +212,9 @@ const ClientTable: React.FunctionComponent = () => {
 
   return (
     <Table
+      rowKey={"id"}
       columns={columns}
-      dataSource={filteredClients.length > 0 ? filteredClients : clients}
+      dataSource={filteredClients ? filteredClients : clients}
       pagination={{
         onChange: (page) => {
           console.log(page);

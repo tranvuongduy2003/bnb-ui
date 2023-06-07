@@ -1,12 +1,26 @@
+import { IProduct } from "@/interfaces/IProduct";
+import { useCartStore } from "@/stores/useCartStore";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Card, Typography } from "antd";
-import React from "react";
+import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-// interface IProductCardProps {}
+interface IProductCardProps {
+  data: IProduct;
+}
 
-const ProductCard: React.FunctionComponent = () => {
+const ProductCard: React.FunctionComponent<IProductCardProps> = ({ data }) => {
   const navigate = useNavigate();
+
+  const addToCart = useCartStore((state) => state.addToCart);
+
+  const buttonRef = useRef<any>();
+
+  const handleClickCart: React.MouseEventHandler<HTMLDivElement> = (event) => {
+    if (event.target !== buttonRef.current) {
+      navigate(`product/${data.id}`);
+    }
+  };
 
   return (
     <Card
@@ -14,27 +28,32 @@ const ProductCard: React.FunctionComponent = () => {
       size="small"
       cover={
         <img
-          src="https://picsum.photos/200"
+          src={data.images[0]}
           alt="product image"
           className="object-cover h-48"
         />
       }
-      onClick={() => navigate("product/detail")}
+      onClick={handleClickCart}
     >
       <Typography.Title level={4} style={{ margin: 0 }}>
-        Product Title
+        {data.name}
       </Typography.Title>
       <p className="mt-2 mb-4 text-xs leading-5 text-neutral-500">
-        Ullamco tempor duis mollit ullamco incididunt culpa elit commodo.
+        {data.desc}
       </p>
       <div className="flex items-center justify-between">
         <Typography.Title level={3} style={{ margin: 0, fontWeight: 700 }}>
           {`${new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND",
-          }).format(120000)}`}
+          }).format(data.price)}`}
         </Typography.Title>
-        <Button type="primary" className="bg-primary">
+        <Button
+          ref={buttonRef}
+          type="primary"
+          className="bg-primary"
+          onClick={() => addToCart({ ...data, quantity: 1 })}
+        >
           <PlusOutlined />
         </Button>
       </div>

@@ -1,12 +1,13 @@
-import { Checkbox, Col, Form, Input, Row, Typography } from "antd";
+import { Col, Form, Input, Row, Typography } from "antd";
 import React from "react";
 
-// interface IRecipientInformationProps {
-// }
+interface IRecipientInformationProps {
+  form: any;
+}
 
-const RecipientInformation: React.FunctionComponent = () => {
-  const [form] = Form.useForm();
-
+const RecipientInformation: React.FunctionComponent<
+  IRecipientInformationProps
+> = ({ form }) => {
   return (
     <div className="border border-solid rounded p-7 border-neutral-200">
       <Typography.Title
@@ -33,21 +34,30 @@ const RecipientInformation: React.FunctionComponent = () => {
       <Form form={form} labelCol={{ span: 24 }} size="large">
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="fullname" label="Full name">
+            <Form.Item
+              name="receiptName"
+              label="Full name"
+              rules={[{ required: true, message: "Full name is missing" }]}
+            >
               <Input />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="phone" label="Phone number">
+            <Form.Item
+              name="receiptPhone"
+              label="Phone number"
+              rules={[{ required: true, message: "Phone number is missing" }]}
+            >
               <Input />
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item name="address" label="Address">
+        <Form.Item
+          name="receiptAddress"
+          label="Address"
+          rules={[{ required: true, message: "Address is missing" }]}
+        >
           <Input />
-        </Form.Item>
-        <Form.Item name="default">
-          <Checkbox defaultChecked={true}>Set as default</Checkbox>
         </Form.Item>
       </Form>
     </div>

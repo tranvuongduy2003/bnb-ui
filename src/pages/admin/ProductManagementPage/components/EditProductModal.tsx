@@ -23,16 +23,12 @@ import {
   getBlob,
 } from "firebase/storage";
 import { app } from "@/firebase";
-import { categoryOptions } from "@/constants/options";
 import { useAppStore } from "@/stores/useAppStore";
-import {
-  createNewProduct,
-  deleteProductById,
-  updateProductById,
-} from "@/apis/product.api";
+import { deleteProductById, updateProductById } from "@/apis/product.api";
 import { useNavigate } from "react-router-dom";
 import { Status } from "@/constants/status";
 import { IProduct } from "@/interfaces/IProduct";
+import { useCategoriesStore } from "@/stores/useCategoryStore";
 
 interface IEditProductModalProps {
   show: boolean;
@@ -49,6 +45,12 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
   const navigate = useNavigate();
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const categories = useCategoriesStore((state) => state.categories);
+
+  const categoryOptions = categories.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
@@ -99,7 +101,6 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
     const payload = {
       ...rest,
       images: [...imageURLs],
-      status: Status.PENDING,
       sold: 0,
     };
 
@@ -201,20 +202,20 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
                 <Form.Item
                   name="price"
                   label="Price"
-                  initialValue={data?.price}
+                  initialValue={JSON.parse(data?.price as string)}
                 >
                   <InputNumber min={0} placeholder="Price" className="w-full" />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item
-                  name="quantity"
-                  label="Quantity"
-                  initialValue={data?.quantity}
+                  name="inventory"
+                  label="Inventory"
+                  initialValue={data?.inventory}
                 >
                   <InputNumber
                     min={0}
-                    placeholder="Quantity"
+                    placeholder="Inventory"
                     className="w-full"
                   />
                 </Form.Item>
@@ -223,9 +224,9 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
           </Col>
           <Col span={8}>
             <Form.Item
-              name="categories_id"
+              name="categoryId"
               label="Categories"
-              initialValue={data?.categories_id}
+              initialValue={data?.categoryId}
             >
               <Select options={categoryOptions} placeholder="Category" />
             </Form.Item>

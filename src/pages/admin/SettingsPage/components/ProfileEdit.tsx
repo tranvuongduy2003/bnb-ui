@@ -23,8 +23,7 @@ import dayjs from "dayjs";
 const ProfileEdit: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
   const setProfile = useAuthStore((state) => state.setProfile);
-  const isLoading = useAppStore((state) => state.isLoading);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
@@ -72,9 +71,7 @@ const ProfileEdit: React.FunctionComponent = () => {
     }
 
     try {
-      console.log(payload);
       const { data } = await updateUserProfile(payload);
-      console.log(data);
       setProfile(data);
       setIsLoading(false);
       notification.success({

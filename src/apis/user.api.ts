@@ -25,7 +25,7 @@ export const deleteUserById = (userId: string | number) => {
 };
 
 export const changeUserPassword = (data: any) => {
-  return httpRequest.patch("/users/change-passsword", data);
+  return httpRequest.patch("/users/change-password", data);
 };
 
 export const changeUserStatus = (

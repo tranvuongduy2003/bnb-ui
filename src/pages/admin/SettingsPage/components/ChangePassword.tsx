@@ -1,14 +1,38 @@
-import { Button, Form, Input } from "antd";
+import { changeUserPassword } from "@/apis/user.api";
+import { useAppStore } from "@/stores/useAppStore";
+import { Button, Form, Input, notification } from "antd";
 import React from "react";
 
 const ChangePassword: React.FunctionComponent = () => {
+  const isLoading = useAppStore((state) => state.isLoading);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
+
   const [form] = Form.useForm();
+
+  const handleChangePassword = async (value: any) => {
+    const { oldPassword, newPassword } = value;
+    console.log(value);
+    setIsLoading(true);
+    try {
+      await changeUserPassword({ oldPassword, newPassword });
+      setIsLoading(false);
+      notification.success({
+        message: "Change password successfully!",
+      });
+    } catch (error: any) {
+      console.log(error);
+      setIsLoading(false);
+      notification.error({
+        message: error.message,
+      });
+    }
+  };
 
   return (
     <div className="py-6 border border-solid rounded border-neutral-300 px-7">
-      <Form form={form} labelCol={{ span: 24 }}>
+      <Form form={form} labelCol={{ span: 24 }} onFinish={handleChangePassword}>
         <Form.Item
-          name="currentPassword"
+          name="oldPassword"
           label="Current password"
           rules={[{ required: true, message: "Please enter current password" }]}
         >
@@ -48,6 +72,7 @@ const ChangePassword: React.FunctionComponent = () => {
         </Form.Item>
         <Form.Item className="p-0 m-0">
           <Button
+            loading={isLoading}
             type="primary"
             htmlType="submit"
             className="float-right m-0 bg-primary"

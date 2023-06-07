@@ -17,11 +17,11 @@ import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
 import React, { useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { app } from "@/firebase";
-import { categoryOptions } from "@/constants/options";
 import { useAppStore } from "@/stores/useAppStore";
 import { createNewProduct } from "@/apis/product.api";
 import { useNavigate } from "react-router-dom";
 import { Status } from "@/constants/status";
+import { useCategoriesStore } from "@/stores/useCategoryStore";
 
 interface IAddProductModalProps {
   show: boolean;
@@ -35,6 +35,12 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
   const navigate = useNavigate();
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const categories = useCategoriesStore((state) => state.categories);
+
+  const categoryOptions = categories.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
 
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -64,11 +70,8 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
     const payload = {
       ...rest,
       images: [...imageURLs],
-      status: Status.PENDING,
       sold: 0,
     };
-
-    console.log(payload);
 
     setIsLoading(true);
     try {
@@ -135,10 +138,10 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item name="quantity" label="Quantity">
+                <Form.Item name="inventory" label="Inventory">
                   <InputNumber
                     min={0}
-                    placeholder="Quantity"
+                    placeholder="Inventory"
                     className="w-full"
                   />
                 </Form.Item>
@@ -146,7 +149,7 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
             </Row>
           </Col>
           <Col span={8}>
-            <Form.Item name="categories_id" label="Categories">
+            <Form.Item name="categoryId" label="Categories">
               <Select options={categoryOptions} placeholder="Category" />
             </Form.Item>
           </Col>

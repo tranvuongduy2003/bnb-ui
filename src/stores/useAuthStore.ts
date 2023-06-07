@@ -1,17 +1,18 @@
 import { TokenPayload } from "@/interfaces/IAuth";
+import { IUser } from "@/interfaces/IUser";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 type State = {
   token: TokenPayload;
   loggedIn: boolean;
-  profile: any;
+  profile: IUser | null;
 };
 
 type Action = {
   setToken: (token: TokenPayload) => void;
   setLoggedIn: (status: boolean) => void;
-  setProfile: (profile: any) => void;
+  setProfile: (profile: IUser) => void;
   reset: () => void;
 };
 
@@ -30,8 +31,8 @@ export const useAuthStore = create(
       ...initState,
       setToken: (token: TokenPayload) => set((state) => ({ token })),
       setLoggedIn: (status: boolean) => set((state) => ({ loggedIn: status })),
-      setProfile: (profile: any) =>
-        set((state) => ({ profile: { ...profile } })),
+      setProfile: (updatedProfile: any) =>
+        set((state) => ({ profile: { ...state.profile, ...updatedProfile } })),
       reset: () => set({ ...initState }),
     }),
     {

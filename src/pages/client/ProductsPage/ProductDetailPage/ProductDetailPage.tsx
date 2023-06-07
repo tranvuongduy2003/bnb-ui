@@ -5,24 +5,53 @@ import {
   Radio,
   RadioChangeEvent,
   Row,
+  Skeleton,
+  Spin,
   Tag,
   Typography,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   PlusOutlined,
   MinusOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
+import { useNavigate, useParams } from "react-router-dom";
+import { useCartStore } from "@/stores/useCartStore";
+import { useProductStore } from "@/stores/useProductStore";
+import Reviews from "./components/Reviews";
+import { useAppStore } from "@/stores/useAppStore";
+import { getProductById } from "@/apis/product.api";
 
 const ProductDetailPage: React.FunctionComponent = () => {
-  // images
-  const images = [
-    "https://loremflickr.com/1000/1000/paris,girl",
-    "https://loremflickr.com/1000/1000/brazil,rio",
-    "https://loremflickr.com/1000/1000",
-  ];
-  const [previewImage, setPreviewImage] = useState<string>(images[0]);
+  const navigate = useNavigate();
+  const params: any = useParams();
+  const productId: string | number = JSON.parse(params.productId);
+
+  const isLoading = useAppStore((state) => state.isLoading);
+  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const product = useProductStore((state) => state.product);
+  const setProduct = useProductStore((state) => state.setProduct);
+
+  const [previewImage, setPreviewImage] = useState<string>();
+
+  const fetchProductData = useRef<any>();
+
+  useEffect(() => {
+    fetchProductData.current = async () => {
+      setIsLoading(true);
+      try {
+        const { data: productData } = await getProductById(productId);
+        setProduct(productData);
+        setPreviewImage(productData.images[0]);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        console.log(error);
+      }
+    };
+    fetchProductData.current();
+  }, []);
 
   // colors
   const colors = ["#FDE5FFFF", "#1599ae"];
@@ -41,7 +70,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
   // quantity
   const [quantity, setQuantity] = useState<number>(1);
   const decrease = () => {
-    if (quantity > 0) {
+    if (quantity > 1) {
       setQuantity((prev) => prev - 1);
     }
   };
@@ -49,20 +78,28 @@ const ProductDetailPage: React.FunctionComponent = () => {
     setQuantity((prev) => prev + 1);
   };
 
+  // features
+  const addToCart = useCartStore((state) => state.addToCart);
+
   return (
     <div className="px-32 py-10">
-      <Typography.Title style={{ margin: 0 }}>Product title</Typography.Title>
+      <Typography.Title style={{ margin: 0 }}>{product?.name}</Typography.Title>
+      {/* PRODUCT INFORMATION */}
       <Row className="mt-6" gutter={40}>
         {/* IMAGES */}
         <Col span={12}>
           <div className="w-full h-[435px]">
-            <img
-              src={previewImage}
-              className="object-cover w-full h-full rounded-md"
-            />
+            {isLoading ? (
+              <Skeleton.Image active={isLoading} className="w-full h-full" />
+            ) : (
+              <img
+                src={previewImage}
+                className="object-cover w-full h-full rounded-md"
+              />
+            )}
           </div>
           <Row gutter={34} justify={"start"} className="mt-8 h-36">
-            {images.map((image, index) => (
+            {product?.images.map((image, index) => (
               <Col span={8} className="h-full">
                 <img
                   key={index}
@@ -70,7 +107,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
                   className={`object-cover w-full h-full rounded-md cursor-pointer ${
                     image === previewImage ? "opacity-100" : "opacity-75"
                   }`}
-                  onClick={() => setPreviewImage(image)}
+                  onMouseEnter={() => setPreviewImage(image)}
                 />
               </Col>
             ))}
@@ -84,11 +121,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
             Product description
           </Typography.Title>
           <p className="text-sm leading-6 text-neutral-700 mb-7">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem lorem
-            aliquam sed lacinia quis. Nibh dictumst vulputate odio pellentesque
-            sit quis ac, sit ipsum. Sit rhoncus velit in sed massa arcu sit eu.
-            Vitae et vitae eget lorem non dui. Sollicitudin ut mi adipiscing
-            duis.
+            {product?.desc}
           </p>
 
           <Row gutter={48}>
@@ -166,7 +199,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
               <div className="flex gap-2">
                 <Button.Group>
                   <Button onClick={decrease}>
-                    <PlusOutlined />
+                    <MinusOutlined />
                   </Button>
                   <Input
                     value={quantity}
@@ -179,7 +212,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
                     }}
                   />
                   <Button onClick={increase}>
-                    <MinusOutlined />
+                    <PlusOutlined />
                   </Button>
                 </Button.Group>
               </div>
@@ -194,7 +227,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
                 style: "currency",
                 currency: "VND",
               }
-            ).format(120000)}`}</span>
+            ).format(product?.price || 0)}`}</span>
           </Row>
 
           {/* PAYMENT BUTTON GROUP */}
@@ -204,18 +237,37 @@ const ProductDetailPage: React.FunctionComponent = () => {
                 size="large"
                 icon={<ShoppingCartOutlined />}
                 className="text-primary border-primary hover:!text-primary-500 hover:!border-primary-500 w-48"
+                onClick={() => product && addToCart({ ...product, quantity })}
               >
                 Add to cart
               </Button>
             </Col>
             <Col>
-              <Button type="primary" className="w-48 bg-primary" size="large">
+              <Button
+                type="primary"
+                className="w-48 bg-primary"
+                size="large"
+                onClick={() =>
+                  navigate("/checkout", {
+                    state: { orders: [{ ...product, quantity }] },
+                  })
+                }
+              >
                 Checkout
               </Button>
             </Col>
           </Row>
         </Col>
       </Row>
+
+      {/* REVIEWS */}
+      {isLoading ? (
+        <div className="flex justify-center w-full">
+          <Spin spinning={isLoading} size="large" />
+        </div>
+      ) : (
+        <Reviews productId={productId} />
+      )}
     </div>
   );
 };

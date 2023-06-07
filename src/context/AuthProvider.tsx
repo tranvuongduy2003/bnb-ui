@@ -1,10 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { login } from "@/apis/auth.api";
 import { useNavigate } from "react-router-dom";
 import { notification } from "antd";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
-import initRequest from "@/services/initRequest";
 
 export const AuthContext = React.createContext({});
 
@@ -17,9 +16,6 @@ const AuthProvider = ({ children }: any) => {
   const setToken = useAuthStore((state) => state.setToken);
   const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
   const setProfile = useAuthStore((state) => state.setProfile);
-  const reset = useAuthStore((state) => state.reset);
-
-  const logOut = useRef<any>(null);
 
   const logIn = async (payload: any) => {
     setIsLoading(true);
@@ -54,26 +50,9 @@ const AuthProvider = ({ children }: any) => {
     }
   };
 
-  logOut.current = () => {
-    setIsLoading(true);
-    reset();
-
-    setIsLoading(false);
-    notification.success({
-      message: "Logout successfully!",
-      duration: 0.25,
-      onClose: () => navigate("/auth/login"),
-    });
-  };
-
-  useEffect(() => {
-    initRequest(logOut.current);
-  }, []);
-
   return (
     <AuthContext.Provider
       value={{
-        logOut: logOut.current,
         logIn,
       }}
     >

@@ -32,11 +32,11 @@ const App: React.FunctionComponent = () => {
         <Route element={<UserLayout />}>
           {/* Products */}
           <Route path="/" element={<ProductsPage />} />
-          <Route path="/product/detail" element={<ProductDetailPage />} />
+          <Route path="/product/:productId" element={<ProductDetailPage />} />
           {/* Profile */}
           <Route path="/profile" element={<ProfilePage />} />
           {/* Order */}
-          <Route path="/order/history" element={<OrderHistoryPage />} />
+          <Route path="/orders" element={<OrderHistoryPage />} />
           {/* Checkout */}
           <Route path="/checkout" element={<CheckoutPage />} />
           <Route path="/cart" element={<CartPage />} />
@@ -44,6 +44,7 @@ const App: React.FunctionComponent = () => {
             path="/checkout/confirmation"
             element={<CheckoutConfirmationPage />}
           />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
 
         {/* Admin Routes */}
@@ -59,7 +60,6 @@ const App: React.FunctionComponent = () => {
           />
           <Route path="/admin/settings" element={<SettingsPage />} />
         </Route>
-
         {/* Not Found Page */}
         <Route path="*" element={<NotFoundPage />} />
       </Route>

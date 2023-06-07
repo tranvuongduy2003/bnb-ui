@@ -1,18 +1,14 @@
-import { Button, Col, Row, Typography } from "antd";
+import { Col, Row } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
-import React, { useState } from "react";
-import { DeleteOutlined } from "@ant-design/icons";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { ICart } from "@/interfaces/ICart";
 
-interface DataType {
-  key: React.Key;
-  name: string;
-  quantity: number;
-  price: number;
-  image: string;
+interface IOrdersTableProps {
+  data: ICart[];
 }
 
-const columns: ColumnsType<DataType> = [
+const columns: ColumnsType<ICart> = [
   {
     title: "Name",
     render: (value, record, index) => {
@@ -20,7 +16,7 @@ const columns: ColumnsType<DataType> = [
         <Row gutter={20} align={"middle"}>
           <Col>
             <img
-              src={record.image}
+              src={record.images[0]}
               alt="item image"
               className="w-24 h-16 rounded-md"
             />
@@ -59,36 +55,17 @@ const columns: ColumnsType<DataType> = [
   },
 ];
 
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "Product name",
-    quantity: 1,
-    price: 120000,
-    image: "https://picsum.photos/200",
-  },
-  {
-    key: "2",
-    name: "Product name",
-    quantity: 1,
-    price: 120000,
-    image: "https://picsum.photos/200",
-  },
-  {
-    key: "3",
-    name: "Product name",
-    quantity: 1,
-    price: 120000,
-    image: "https://picsum.photos/200",
-  },
-];
-
-const OrdersTable: React.FunctionComponent = () => {
+const OrdersTable: React.FunctionComponent<IOrdersTableProps> = ({ data }) => {
   const navigate = useNavigate();
 
   return (
     <div>
-      <Table columns={columns} pagination={false} dataSource={data} />
+      <Table
+        rowKey={"id"}
+        columns={columns}
+        pagination={false}
+        dataSource={data}
+      />
     </div>
   );
 };

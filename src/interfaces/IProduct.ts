@@ -2,11 +2,12 @@ export interface IProduct {
   id: number;
   name: string;
   desc: string;
-  price: number;
+  price: number | string;
   status: string;
   brandName: string;
-  categories_id: string;
-  quantity: number;
+  categoryId: number | string;
+  importPrice: number | string;
+  inventory: number;
   sold: number;
   images: string[];
   createdAt: string | Date;

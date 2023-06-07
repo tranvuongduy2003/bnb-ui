@@ -1,16 +1,21 @@
 import { ICategory } from "@/interfaces/ICategory";
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 
 type State = {
   categories: ICategory[];
 };
 
 type Action = {
-  setCategories: (categories: ICategory[]) => void;
+  setCategories: (updatedCategories: ICategory[]) => void;
 };
 
-export const categoriestore = create<State & Action>((set) => ({
-  categories: [],
-  setCategories: (categories: ICategory[]) =>
-    set(() => ({ categories: [...categories] })),
-}));
+export const useCategoriesStore = create(
+  immer<State & Action>((set) => ({
+    categories: [],
+    setCategories: (updatedCategories: ICategory[]) =>
+      set((state) => {
+        state.categories = updatedCategories;
+      }),
+  }))
+);

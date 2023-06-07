@@ -1,12 +1,26 @@
+import { ICart } from "@/interfaces/ICart";
+import { useAppStore } from "@/stores/useAppStore";
 import { ContainerOutlined, HomeOutlined } from "@ant-design/icons";
 import { Button, Input, Typography } from "antd";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-// interface IPaymentBillProps {}
+interface IPaymentBillProps {
+  onPay: any;
+  orders: ICart[];
+}
 
-const PaymentBill: React.FunctionComponent = () => {
+const PaymentBill: React.FunctionComponent<IPaymentBillProps> = ({
+  onPay,
+  orders,
+}) => {
   const navigate = useNavigate();
+
+  const isLoading = useAppStore((state) => state.isLoading);
+
+  const subTotal = orders
+    .map((item) => JSON.parse(item.price as string) * item.quantity)
+    .reduce((prev, cur) => prev + cur, 0);
 
   return (
     <div className="flex flex-col gap-8 rounded bg-neutral-100 p-7">
@@ -73,7 +87,7 @@ const PaymentBill: React.FunctionComponent = () => {
               {new Intl.NumberFormat("vi-VN", {
                 style: "currency",
                 currency: "VND",
-              }).format(360000)}
+              }).format(subTotal)}
             </span>
           </div>
           <div className="flex items-center justify-between">
@@ -92,19 +106,16 @@ const PaymentBill: React.FunctionComponent = () => {
             {new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
-            }).format(390000)}
+            }).format(subTotal + 30000)}
           </span>
         </div>
         <div>
           <Button
+            loading={isLoading}
             type="primary"
             className="w-full bg-primary"
             size="large"
-            onClick={() =>
-              navigate("/checkout/confirmation", {
-                state: { status: "success" },
-              })
-            }
+            onClick={() => onPay()}
           >
             Pay
           </Button>
