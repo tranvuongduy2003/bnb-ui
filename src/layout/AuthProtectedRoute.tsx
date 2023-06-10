@@ -7,10 +7,12 @@ const AuthProtectedRoute: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
   const loggedIn = useAuthStore((state) => state.loggedIn);
 
-  return loggedIn && profile.role === Role.CUSTOMER ? (
+  return loggedIn && profile?.role === Role.CUSTOMER ? (
     <Navigate to="/" replace />
-  ) : loggedIn && profile.role === Role.ADMIN ? (
+  ) : loggedIn && profile?.role === Role.ADMIN ? (
     <Navigate to="/admin/dashboard" replace />
+  ) : loggedIn && profile?.role === Role.DELIVERY ? (
+    <Navigate to="/delivery/order-management" replace />
   ) : (
     <Outlet />
   );

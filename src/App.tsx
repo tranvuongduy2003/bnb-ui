@@ -1,22 +1,26 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import UserLayout from "@/layout/UserLayout";
-import AdminLayout from "@/layout/AdminLayout";
-import AuthProtectedRoute from "@/layout/AuthProtectedRoute";
+
+import NotFoundPage from "@/pages/NotFoundPage";
+import ClientManagementPage from "@/pages/admin/ClientManagementPage/ClientManagementPage";
+import DashboardPage from "@/pages/admin/DashboardPage/DashboardPage";
+import ProductManagementPage from "@/pages/admin/ProductManagementPage/ProductManagementPage";
+import SettingsPage from "@/pages/admin/SettingsPage/SettingsPage";
 import LoginPage from "@/pages/auth/LoginPage";
 import SignupPage from "@/pages/auth/SignupPage";
-import ProductManagementPage from "@/pages/admin/ProductManagementPage/ProductManagementPage";
-import NotFoundPage from "@/pages/NotFoundPage";
-import ProductsPage from "@/pages/client/ProductsPage/ProductsPage";
-import ProductDetailPage from "@/pages/client/ProductsPage/ProductDetailPage/ProductDetailPage";
-import ProfilePage from "@/pages/client/ProfilePage/ProfilePage";
-import OrderHistoryPage from "@/pages/client/OrderHistoryPage/OrderHistoryPage";
-import CheckoutPage from "@/pages/client/CheckoutPage/CheckoutPage";
 import CartPage from "@/pages/client/CartPage/CartPage";
 import CheckoutConfirmationPage from "@/pages/client/CheckoutPage/CheckoutConfirmationPage/CheckoutConfirmationPage";
-import DashboardPage from "@/pages/admin/DashboardPage/DashboardPage";
-import ClientManagementPage from "@/pages/admin/ClientManagementPage/ClientManagementPage";
-import SettingsPage from "@/pages/admin/SettingsPage/SettingsPage";
+import CheckoutPage from "@/pages/client/CheckoutPage/CheckoutPage";
+import OrderHistoryPage from "@/pages/client/OrderHistoryPage/OrderHistoryPage";
+import ProductDetailPage from "@/pages/client/ProductsPage/ProductDetailPage/ProductDetailPage";
+import ProductsPage from "@/pages/client/ProductsPage/ProductsPage";
+import ProfilePage from "@/pages/client/ProfilePage/ProfilePage";
+import OrderManagementPage from "@/pages/delivery/OrderManagementPage/OrderManagementPage";
+
+import AuthProtectedRoute from "@/layout/AuthProtectedRoute";
+import AdminLayout from "@/layout/admin/AdminLayout";
+import UserLayout from "@/layout/client/UserLayout";
+import DeliveryLayout from "@/layout/delivery/DeliveryLayout";
 
 const App: React.FunctionComponent = () => {
   return (
@@ -45,6 +49,16 @@ const App: React.FunctionComponent = () => {
             element={<CheckoutConfirmationPage />}
           />
           <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+
+        {/* Delivery Routes */}
+        <Route element={<DeliveryLayout />}>
+          {/* Products */}
+          <Route
+            path="/delivery/order-management"
+            element={<OrderManagementPage />}
+          />
+          <Route path="/delivery/settings" element={<SettingsPage />} />
         </Route>
 
         {/* Admin Routes */}

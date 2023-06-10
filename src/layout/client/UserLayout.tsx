@@ -1,15 +1,15 @@
+import { Role } from "@/constants/role";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { Layout } from "antd";
 import React from "react";
-import Header from "./Header";
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { Role } from "@/constants/role";
+import Header from "./Header";
 
 const UserLayout: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
   const loggedIn = useAuthStore((state) => state.loggedIn);
 
-  return loggedIn && profile.role === Role.CUSTOMER ? (
+  return loggedIn && profile?.role === Role.CUSTOMER ? (
     <Layout>
       <Layout.Header className="flex items-center px-6 bg-white border-0 border-b-2 border-solid border-neutral-100">
         <Header />

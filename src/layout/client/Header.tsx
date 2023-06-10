@@ -1,16 +1,15 @@
-import React, { useContext, useState } from "react";
-import { Avatar, Badge, Menu, MenuProps, Popover, Typography } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useCartStore } from "@/stores/useCartStore";
+import { logOut } from "@/utils/auth";
 import {
   BarsOutlined,
-  BellOutlined,
   LogoutOutlined,
   SettingOutlined,
   ShoppingCartOutlined,
 } from "@ant-design/icons";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { logOut } from "@/utils/auth";
-import { useCartStore } from "@/stores/useCartStore";
+import { Avatar, Badge, Menu, MenuProps, Popover, Typography } from "antd";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FunctionComponent = () => {
   const navigate = useNavigate();

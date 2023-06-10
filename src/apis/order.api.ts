@@ -14,3 +14,9 @@ export const cancelOrder = (orderId: string | number) => {
     status: Status.CANCELLED,
   });
 };
+
+export const changeOrderStatus = (orderId: string | number, status: Status) => {
+  return httpRequest.put(`/orders/${orderId}`, {
+    status: status,
+  });
+};

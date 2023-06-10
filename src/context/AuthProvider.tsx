@@ -1,9 +1,10 @@
-import React, { useRef } from "react";
 import { login } from "@/apis/auth.api";
-import { useNavigate } from "react-router-dom";
-import { notification } from "antd";
+import { Role } from "@/constants/role";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { notification } from "antd";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = React.createContext({});
 
@@ -35,10 +36,12 @@ const AuthProvider = ({ children }: any) => {
         message: "Login successfully!",
         duration: 0.25,
         onClose: () =>
-          profile.role === "user"
+          profile.role === Role.CUSTOMER
             ? navigate("/")
-            : profile.role === "admin"
+            : profile.role === Role.ADMIN
             ? navigate("/admin/dashboard")
+            : profile.role === Role.DELIVERER
+            ? navigate("/delivery/order-management")
             : null,
       });
     } catch (error: any) {

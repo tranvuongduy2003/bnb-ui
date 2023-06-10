@@ -1,10 +1,10 @@
-import React from "react";
+import { Role } from "@/constants/role";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { Col, Row, Typography } from "antd";
-import ProfileEdit from "./components/ProfileEdit";
+import React from "react";
 import ChangePassword from "./components/ChangePassword";
 import Deactivate from "./components/Deactivate";
-import { useAuthStore } from "@/stores/useAuthStore";
-import { Role } from "@/constants/role";
+import ProfileEdit from "./components/ProfileEdit";
 
 const SettingsPage: React.FunctionComponent = (props) => {
   const profile = useAuthStore((state) => state.profile);
@@ -23,7 +23,7 @@ const SettingsPage: React.FunctionComponent = (props) => {
   //   };
 
   return (
-    <div className={`${profile.role === Role.ADMIN ? "px-36" : "px-80"} py-6`}>
+    <div className={`${profile?.role === Role.ADMIN ? "px-36" : "px-80"} py-6`}>
       <Row>
         <Typography.Title level={2} style={{ margin: 0 }}>
           Settings
@@ -32,7 +32,7 @@ const SettingsPage: React.FunctionComponent = (props) => {
       <Row justify={"center"}>
         <ProfileEdit />
       </Row>
-      {profile.role === Role.ADMIN && (
+      {profile?.role === Role.ADMIN && (
         <>
           <Row className="my-10">
             <Col span={8}>
