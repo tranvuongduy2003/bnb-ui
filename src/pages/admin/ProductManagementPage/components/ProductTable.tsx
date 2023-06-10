@@ -1,5 +1,6 @@
 import CategoryTag from "@/components/CategoryTag";
 import { IProduct } from "@/interfaces/IProduct";
+import { useBrandStore } from "@/stores/useBrandStore";
 import { useProductStore } from "@/stores/useProductStore";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, InputRef, Rate, Space, Table } from "antd";
@@ -22,6 +23,7 @@ const ProductTable: React.FunctionComponent = () => {
   const searchInput = useRef<InputRef>(null);
 
   const products = useProductStore((state) => state.products);
+  const brands = useBrandStore((state) => state.brands);
 
   const handleSearch = (
     selectedKeys: string[],
@@ -145,14 +147,17 @@ const ProductTable: React.FunctionComponent = () => {
       dataIndex: "desc",
       key: "desc",
       width: "20%",
-      ...getColumnSearchProps("desc"),
     },
     {
       title: "Brand",
-      dataIndex: "brandName",
-      key: "brandName",
+      dataIndex: "brandId",
+      key: "brandId",
       width: "10%",
-      ...getColumnSearchProps("brandName"),
+      render: (value, record, index) => {
+        const brand = brands.find((item) => item.id === value);
+
+        return <span>{brand?.name}</span>;
+      },
     },
     {
       title: "Category",

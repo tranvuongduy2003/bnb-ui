@@ -4,10 +4,11 @@ export interface IProduct {
   desc: string;
   price: number | string;
   status: string;
-  brandName: string;
+  brandId: string | number;
   categoryId: number | string;
   importPrice: number | string;
   inventory: number;
+  avgRating: number;
   sold: number;
   images: string[];
   createdAt: string | Date;

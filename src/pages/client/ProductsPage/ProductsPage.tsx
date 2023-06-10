@@ -1,6 +1,8 @@
+import { getAllBrands } from "@/apis/brand.api";
 import { getAllCategories } from "@/apis/category.api";
 import { getAllProducts, searchProductsByName } from "@/apis/product.api";
 import { useAppStore } from "@/stores/useAppStore";
+import { useBrandStore } from "@/stores/useBrandStore";
 import { useCategoriesStore } from "@/stores/useCategoryStore";
 import { useProductStore } from "@/stores/useProductStore";
 import { SearchOutlined } from "@ant-design/icons";
@@ -18,6 +20,7 @@ const ProductsPage: React.FunctionComponent = () => {
   const setProducts = useProductStore((state) => state.setProducts);
   const setSortBy = useProductStore((state) => state.setSortBy);
   const setCategories = useCategoriesStore((state) => state.setCategories);
+  const setBrands = useBrandStore((state) => state.setBrands);
 
   const [searchValue, setSearchValue] = useState<string>("");
 
@@ -28,9 +31,11 @@ const ProductsPage: React.FunctionComponent = () => {
     try {
       const { data: productData } = await getAllProducts();
       const { data: categoryData } = await getAllCategories();
+      const { data: brandData } = await getAllBrands();
 
       setProducts(productData);
       setCategories(categoryData);
+      setBrands(brandData);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);

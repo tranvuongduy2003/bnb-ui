@@ -1,34 +1,42 @@
+import {
+  deleteProductById,
+  getProductById,
+  updateProductById,
+} from "@/apis/product.api";
+import { app } from "@/firebase";
+import { IProduct } from "@/interfaces/IProduct";
+import { useBrandStore } from "@/stores/useBrandStore";
+import { useCategoriesStore } from "@/stores/useCategoryStore";
+import { useProductStore } from "@/stores/useProductStore";
 import validator from "@/utils/validateImage";
 import { UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
+  Divider,
   Form,
   Input,
   InputNumber,
+  InputRef,
   Modal,
   Row,
   Select,
+  Skeleton,
+  Space,
   Upload,
   message,
   notification,
 } from "antd";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
-import React, { useEffect, useState } from "react";
 import {
+  getBlob,
   getDownloadURL,
   getStorage,
   ref,
   uploadBytes,
-  getBlob,
 } from "firebase/storage";
-import { app } from "@/firebase";
-import { useAppStore } from "@/stores/useAppStore";
-import { deleteProductById, updateProductById } from "@/apis/product.api";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Status } from "@/constants/status";
-import { IProduct } from "@/interfaces/IProduct";
-import { useCategoriesStore } from "@/stores/useCategoryStore";
 
 interface IEditProductModalProps {
   show: boolean;
@@ -43,24 +51,33 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
 }) => {
   const storage = getStorage(app);
   const navigate = useNavigate();
-  const isLoading = useAppStore((state) => state.isLoading);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
   const categories = useCategoriesStore((state) => state.categories);
+  const brands = useBrandStore((state) => state.brands);
+  const product = useProductStore((state) => state.product);
+  const setProduct = useProductStore((state) => state.setProduct);
+
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [items, setItems] = useState<string[]>(brands.map((item) => item.name));
+  const [name, setName] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const fetchProductData = useRef<any>();
+  const inputRef = useRef<InputRef>(null);
+
+  const [form] = Form.useForm();
 
   const categoryOptions = categories.map((item) => ({
     value: item.id,
     label: item.name,
   }));
 
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-
-  const [form] = Form.useForm();
-
   useEffect(() => {
-    const convertImgUrlToFile = async () => {
+    fetchProductData.current = async () => {
+      setIsLoading(true);
       try {
+        const { data: productData } = await getProductById(data.id);
         const files: any = await Promise.all(
-          data.images.map(async (item) => {
+          productData.images.map(async (item: any) => {
             const fileRef = ref(storage, item);
             const blob = await getBlob(fileRef);
             const file = new File([blob], fileRef.name, {
@@ -69,12 +86,15 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
             return file;
           })
         );
+        setProduct(productData);
         setFileList(files);
+        setIsLoading(false);
       } catch (error) {
+        setIsLoading(false);
         console.log(error);
       }
     };
-    convertImgUrlToFile();
+    fetchProductData.current();
   }, []);
 
   const onChangeFile: UploadProps["onChange"] = async ({ fileList }) => {
@@ -122,6 +142,21 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
     }
   };
 
+  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
+  const addItem = (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => {
+    e.preventDefault();
+    setItems([...items, name || `New item`]);
+    setName("");
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
+
   const handleDeleteProduct = async () => {
     setIsLoading(true);
     try {
@@ -167,88 +202,131 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
       onCancel={() => setShow(false)}
       width={800}
     >
-      <Form
-        form={form}
-        labelCol={{ span: 24 }}
-        onFinish={(values) => handleEditNewProduct(values)}
-      >
-        <Form.Item name="name" label="Name" initialValue={data?.name}>
-          <Input placeholder="Product name" />
-        </Form.Item>
-        <Row justify={"space-between"} gutter={57}>
-          <Col span={16}>
-            <Form.Item
-              name="desc"
-              label="Description"
-              initialValue={data?.desc}
+      {isLoading ? (
+        <Skeleton />
+      ) : (
+        <Form
+          form={form}
+          labelCol={{ span: 24 }}
+          onFinish={(values) => handleEditNewProduct(values)}
+        >
+          <Form.Item name="name" label="Name" initialValue={product?.name}>
+            <Input placeholder="Product name" />
+          </Form.Item>
+          <Row>
+            <Col span={24}>
+              <Form.Item
+                name="desc"
+                label="Description"
+                initialValue={product?.desc}
+              >
+                <Input.TextArea rows={3} placeholder="Description" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={18}>
+            <Col span={8}>
+              <Form.Item
+                name="importPrice"
+                label="Import price"
+                initialValue={JSON.parse(
+                  (product?.importPrice as string) || "0"
+                )}
+              >
+                <InputNumber
+                  min={0}
+                  placeholder="Import price"
+                  className="w-full"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="price"
+                label="Price"
+                initialValue={JSON.parse(product?.price as string)}
+              >
+                <InputNumber min={0} placeholder="Price" className="w-full" />
+              </Form.Item>
+            </Col>
+            <Col span={8}>
+              <Form.Item
+                name="inventory"
+                label="Inventory"
+                initialValue={product?.inventory}
+              >
+                <InputNumber
+                  min={0}
+                  placeholder="Inventory"
+                  className="w-full"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={18}>
+            <Col span={12}>
+              <Form.Item
+                name="brandName"
+                label="Brand"
+                initialValue={
+                  brands.find((item) => item.id === product?.brandId)?.name
+                }
+              >
+                <Select
+                  placeholder="Brand"
+                  dropdownRender={(menu) => (
+                    <>
+                      {menu}
+                      <Divider style={{ margin: "8px 0" }} />
+                      <Space style={{ padding: "0 8px 4px" }}>
+                        <Input
+                          placeholder="Please enter item"
+                          ref={inputRef}
+                          value={name}
+                          onChange={onNameChange}
+                        />
+                        <Button
+                          type="primary"
+                          onClick={addItem}
+                          className="bg-primary"
+                        >
+                          Add
+                        </Button>
+                      </Space>
+                    </>
+                  )}
+                  options={items.map((item) => ({ label: item, value: item }))}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                name="categoryId"
+                label="Categories"
+                initialValue={product?.categoryId}
+              >
+                <Select options={categoryOptions} placeholder="Category" />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Form.Item name="images" label="Product images">
+            <Upload
+              listType="text"
+              fileList={fileList}
+              multiple={true}
+              beforeUpload={beforeUploadFile}
+              onChange={onChangeFile}
             >
-              <Input placeholder="Description" />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              name="brandName"
-              label="Brand name"
-              initialValue={data?.brandName}
-            >
-              <Input placeholder="Brand name" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row justify={"space-between"} gutter={57}>
-          <Col span={16}>
-            <Row justify={"space-between"} gutter={57}>
-              <Col span={12}>
-                <Form.Item
-                  name="price"
-                  label="Price"
-                  initialValue={JSON.parse(data?.price as string)}
-                >
-                  <InputNumber min={0} placeholder="Price" className="w-full" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  name="inventory"
-                  label="Inventory"
-                  initialValue={data?.inventory}
-                >
-                  <InputNumber
-                    min={0}
-                    placeholder="Inventory"
-                    className="w-full"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Col>
-          <Col span={8}>
-            <Form.Item
-              name="categoryId"
-              label="Categories"
-              initialValue={data?.categoryId}
-            >
-              <Select options={categoryOptions} placeholder="Category" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Form.Item name="images" label="Product images">
-          <Upload
-            listType="text"
-            fileList={fileList}
-            multiple={true}
-            beforeUpload={beforeUploadFile}
-            onChange={onChangeFile}
-          >
-            {fileList.length >= 3 ? null : (
-              <Button type="primary">
-                <UploadOutlined />
-                <span>Upload</span>
-              </Button>
-            )}
-          </Upload>
-        </Form.Item>
-      </Form>
+              {fileList.length >= 3 ? null : (
+                <Button type="primary">
+                  <UploadOutlined />
+                  <span>Upload</span>
+                </Button>
+              )}
+            </Upload>
+          </Form.Item>
+        </Form>
+      )}
     </Modal>
   );
 };

@@ -1,6 +1,8 @@
+import { getAllBrands } from "@/apis/brand.api";
 import { getAllCategories } from "@/apis/category.api";
 import { getAllProducts } from "@/apis/product.api";
 import { useAppStore } from "@/stores/useAppStore";
+import { useBrandStore } from "@/stores/useBrandStore";
 import { useCategoriesStore } from "@/stores/useCategoryStore";
 import { useProductStore } from "@/stores/useProductStore";
 import { Button, Col, Row, Spin, Typography } from "antd";
@@ -19,6 +21,7 @@ const ProductManagementPage: React.FunctionComponent = () => {
   const setProducts = useProductStore((state) => state.setProducts);
   const categories = useCategoriesStore((state) => state.categories);
   const setCategories = useCategoriesStore((state) => state.setCategories);
+  const setBrands = useBrandStore((state) => state.setBrands);
 
   useEffect(() => {
     fetchProductData.current = async () => {
@@ -26,9 +29,11 @@ const ProductManagementPage: React.FunctionComponent = () => {
       try {
         const { data: productData } = await getAllProducts();
         const { data: categoryData } = await getAllCategories();
+        const { data: brandData } = await getAllBrands();
 
         setProducts(productData);
         setCategories(categoryData);
+        setBrands(brandData);
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);

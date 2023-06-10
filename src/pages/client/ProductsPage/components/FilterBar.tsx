@@ -1,4 +1,5 @@
 import { IProduct } from "@/interfaces/IProduct";
+import { useBrandStore } from "@/stores/useBrandStore";
 import { useCategoriesStore } from "@/stores/useCategoryStore";
 import { useProductStore } from "@/stores/useProductStore";
 import { Checkbox, Col, Collapse, InputNumber, Rate, Row, Slider } from "antd";
@@ -43,27 +44,35 @@ const FilterBar: React.FunctionComponent = () => {
   };
 
   // Brand
-  const brands = [
-    { label: "Channel", value: "channel" },
-    { label: "Louis Vuitton", value: "louis_vuitton" },
-    { label: "Gucci", value: "gucci" },
-  ];
-
+  const brands = useBrandStore((state) => state.brands);
+  const brandOptions = brands.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
   const onBrandChange = (checkedValues: CheckboxValueType[]) => {
-    console.log("checked = ", checkedValues);
+    setBrandValue(checkedValues);
   };
 
   // Rating
-  const rating = [
+  const ratingOptions = [
     { value: 5 },
     { value: 4 },
-    { value: 2.5 },
+    { value: 3 },
     { value: 2 },
     { value: 1 },
   ];
+  const onRatingChange = (checkedValues: CheckboxValueType[]) => {
+    setRatingValue(checkedValues);
+  };
 
   const [categoryValue, setCategoryValue] = useState<CheckboxValueType[]>(
     categoryOptions.map((item) => item.value)
+  );
+  const [brandValue, setBrandValue] = useState<CheckboxValueType[]>(
+    brandOptions.map((item) => item.value)
+  );
+  const [ratingValue, setRatingValue] = useState<CheckboxValueType[]>(
+    ratingOptions.map((item) => item.value)
   );
   const [limit, setLimit] = useState<[number, number]>([
     Math.round(range[0] * (maxPrice / 100)),
@@ -80,6 +89,22 @@ const FilterBar: React.FunctionComponent = () => {
 
     changedProducts = changedProducts.filter((item) => {
       return categoryValue?.includes(item.categoryId);
+    });
+
+    changedProducts = changedProducts.filter((item) => {
+      return brandValue?.includes(item.brandId);
+    });
+
+    changedProducts = changedProducts.filter((item) => {
+      for (let index = 0; index < ratingValue.length; index++) {
+        if (
+          item.avgRating <= (ratingValue[index] as number) &&
+          item.avgRating > (ratingValue[index] as number) - 1
+        ) {
+          return true;
+        }
+      }
+      return false;
     });
 
     switch (sortBy) {
@@ -117,7 +142,7 @@ const FilterBar: React.FunctionComponent = () => {
     }
 
     setFilteredProducts(changedProducts);
-  }, [products, categoryValue, limit, sortBy]);
+  }, [products, categoryValue, brandValue, ratingValue, limit, sortBy]);
 
   return (
     <div className="w-full p-4 rounded-md shadow-md">
@@ -204,9 +229,9 @@ const FilterBar: React.FunctionComponent = () => {
         >
           <Panel header="Brand" key="1" className="p-0 m-0 text-base font-bold">
             <Checkbox.Group
-              options={brands}
-              defaultValue={brands.map((item) => item.value)}
+              options={brandOptions}
               onChange={onBrandChange}
+              defaultValue={brandValue}
               className="flex flex-col gap-2 font-normal"
             />
           </Panel>
@@ -227,11 +252,11 @@ const FilterBar: React.FunctionComponent = () => {
             className="p-0 m-0 text-base font-bold"
           >
             <Checkbox.Group
-              defaultValue={rating.map((item) => item.value)}
-              onChange={onBrandChange}
+              defaultValue={ratingOptions.map((item) => item.value)}
+              onChange={onRatingChange}
               className="flex flex-col gap-2"
             >
-              {rating.map((item, index) => (
+              {ratingOptions.map((item, index) => (
                 <Checkbox
                   key={index}
                   value={item.value}

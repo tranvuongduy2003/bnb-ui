@@ -1,27 +1,30 @@
+import { createNewProduct } from "@/apis/product.api";
+import { app } from "@/firebase";
+import { useAppStore } from "@/stores/useAppStore";
+import { useBrandStore } from "@/stores/useBrandStore";
+import { useCategoriesStore } from "@/stores/useCategoryStore";
 import validator from "@/utils/validateImage";
 import { UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Col,
+  Divider,
   Form,
   Input,
   InputNumber,
+  InputRef,
   Modal,
   Row,
   Select,
+  Space,
   Upload,
   message,
   notification,
 } from "antd";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
-import React, { useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import { app } from "@/firebase";
-import { useAppStore } from "@/stores/useAppStore";
-import { createNewProduct } from "@/apis/product.api";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Status } from "@/constants/status";
-import { useCategoriesStore } from "@/stores/useCategoryStore";
 
 interface IAddProductModalProps {
   show: boolean;
@@ -32,6 +35,26 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
   show,
   setShow,
 }) => {
+  const brands = useBrandStore((state) => state.brands);
+  const [items, setItems] = useState<string[]>(brands.map((item) => item.name));
+  const [name, setName] = useState("");
+  const inputRef = useRef<InputRef>(null);
+
+  const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+  };
+
+  const addItem = (
+    e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>
+  ) => {
+    e.preventDefault();
+    setItems([...items, name || `New item`]);
+    setName("");
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  };
+
   const navigate = useNavigate();
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
@@ -72,6 +95,8 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
       images: [...imageURLs],
       sold: 0,
     };
+
+    console.log(payload);
 
     setIsLoading(true);
     try {
@@ -117,39 +142,70 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
         <Form.Item name="name" label="Name">
           <Input placeholder="Product name" />
         </Form.Item>
-        <Row justify={"space-between"} gutter={57}>
-          <Col span={16}>
+        <Row>
+          <Col span={24}>
             <Form.Item name="desc" label="Description">
-              <Input placeholder="Description" />
-            </Form.Item>
-          </Col>
-          <Col span={8}>
-            <Form.Item name="brandName" label="Brand name">
-              <Input placeholder="Brand name" />
+              <Input.TextArea
+                rows={3}
+                autoSize={false}
+                placeholder="Description"
+              />
             </Form.Item>
           </Col>
         </Row>
-        <Row justify={"space-between"} gutter={57}>
-          <Col span={16}>
-            <Row justify={"space-between"} gutter={57}>
-              <Col span={12}>
-                <Form.Item name="price" label="Price">
-                  <InputNumber min={0} placeholder="Price" className="w-full" />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item name="inventory" label="Inventory">
-                  <InputNumber
-                    min={0}
-                    placeholder="Inventory"
-                    className="w-full"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
+        <Row gutter={18}>
+          <Col span={8}>
+            <Form.Item name="importPrice" label="Import price">
+              <InputNumber
+                min={0}
+                placeholder="Import price"
+                className="w-full"
+              />
+            </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item name="categoryId" label="Categories">
+            <Form.Item name="price" label="Price">
+              <InputNumber min={0} placeholder="Price" className="w-full" />
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item name="inventory" label="Inventory">
+              <InputNumber min={0} placeholder="Inventory" className="w-full" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={18}>
+          <Col span={12}>
+            <Form.Item name="brandName" label="Brand">
+              <Select
+                placeholder="Brand"
+                dropdownRender={(menu) => (
+                  <>
+                    {menu}
+                    <Divider style={{ margin: "8px 0" }} />
+                    <Space style={{ padding: "0 8px 4px" }}>
+                      <Input
+                        placeholder="Please enter item"
+                        ref={inputRef}
+                        value={name}
+                        onChange={onNameChange}
+                      />
+                      <Button
+                        type="primary"
+                        onClick={addItem}
+                        className="bg-primary"
+                      >
+                        Add
+                      </Button>
+                    </Space>
+                  </>
+                )}
+                options={items.map((item) => ({ label: item, value: item }))}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item name="categoryId" label="Category">
               <Select options={categoryOptions} placeholder="Category" />
             </Form.Item>
           </Col>
