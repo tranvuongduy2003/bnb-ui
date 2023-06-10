@@ -1,5 +1,4 @@
 import { addReview } from "@/apis/product.api";
-import { IReview } from "@/interfaces/IReview";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useReviewStore } from "@/stores/useReviewStore";
 import {
@@ -22,11 +21,12 @@ const PostReview: React.FunctionComponent<IPostReviewProps> = ({
   productId,
 }) => {
   const profile = useAuthStore((state) => state.profile);
+  const setReviews = useReviewStore((state) => state.setReviews);
+  const setRatingPoints = useReviewStore((state) => state.setRatingPoints);
 
   const [rating, setRating] = useState<number>(0);
   const [content, setContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  //   const setReviews = useReviewStore((state) => state.setReviews);
 
   const onChangeRate: RateProps["onChange"] = (value) => {
     setRating(value);
@@ -40,7 +40,9 @@ const PostReview: React.FunctionComponent<IPostReviewProps> = ({
         content,
         productId,
       });
-      //   setReviews(data);
+      const { reviews, ratingPoint } = data;
+      setRatingPoints(ratingPoint);
+      setReviews(reviews);
       setIsLoading(false);
       notification.success({
         message: "Post review successfully!",

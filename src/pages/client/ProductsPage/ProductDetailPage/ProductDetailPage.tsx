@@ -11,7 +11,6 @@ import {
   Button,
   Col,
   Input,
-  Radio,
   RadioChangeEvent,
   Row,
   Skeleton,
@@ -44,6 +43,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
         const { data: productData } = await getProductById(productId);
         setProduct(productData);
         setPreviewImage(productData.images[0]);
+        if (productData.inventory === 0) setQuantity(0);
         setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
@@ -71,10 +71,18 @@ const ProductDetailPage: React.FunctionComponent = () => {
   const decrease = () => {
     if (quantity > 1) {
       setQuantity((prev) => prev - 1);
+    } else if (quantity === 1) {
+      message.error("Quantity must be at least 1");
+    } else {
+      message.error("The requested quantity is not available");
     }
   };
   const increase = () => {
-    setQuantity((prev) => prev + 1);
+    if (quantity < (product?.inventory as number)) {
+      setQuantity((prev) => prev + 1);
+    } else {
+      message.error("The requested quantity is not available");
+    }
   };
 
   // features
@@ -119,75 +127,9 @@ const ProductDetailPage: React.FunctionComponent = () => {
           <Typography.Title level={3} style={{ margin: 0 }}>
             Product description
           </Typography.Title>
-          <p className="text-sm leading-6 text-neutral-700 mb-7">
+          <p className="mb-20 text-lg leading-6 text-neutral-500">
             {product?.desc}
           </p>
-
-          <Row gutter={48}>
-            {/* COLOR */}
-            <Col className="flex flex-col">
-              <span className="mb-2 text-sm font-semibold text-neutral-700">
-                Color
-              </span>
-              <div className="flex gap-2">
-                {colors.map((item, index) => (
-                  <div
-                    key={index}
-                    onClick={() => setColor(item)}
-                    style={{ backgroundColor: item }}
-                    className={`w-9 h-9 rounded-full border-2 border-solid ${
-                      color === item ? "border-primary" : "border-transparent"
-                    } cursor-pointer transition-all`}
-                  ></div>
-                ))}
-              </div>
-            </Col>
-
-            {/* TYPE */}
-            <Col className="flex flex-col mb-7">
-              <span className="mb-2 text-sm font-semibold text-neutral-700">
-                Type
-              </span>
-              <div className="flex gap-2">
-                <Radio.Group
-                  value={type}
-                  onChange={handleTypeChange}
-                  buttonStyle="solid"
-                  className="border-primary-500"
-                  size="large"
-                >
-                  <Radio.Button
-                    value="men"
-                    className="text-primary-500 !border-primary-500 hover:text-primary-500"
-                  >
-                    Men
-                  </Radio.Button>
-                  <Radio.Button
-                    value="women"
-                    className="text-primary-500 border-primary-500 hover:text-primary-500"
-                  >
-                    Women
-                  </Radio.Button>
-                </Radio.Group>
-              </div>
-            </Col>
-          </Row>
-
-          {/* PROMOTION */}
-          <Row className="mb-7">
-            <Col className="flex flex-col">
-              <span className="mb-2 text-sm font-semibold text-neutral-700">
-                Promotion
-              </span>
-              <div className="flex gap-2">
-                {promotions.map((item, index) => (
-                  <div className="px-4 py-2 text-base rounded-md bg-primary-100 text-primary-500">
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </Col>
-          </Row>
 
           {/* QUANTITY */}
           <Row className="mb-7">
@@ -231,33 +173,39 @@ const ProductDetailPage: React.FunctionComponent = () => {
 
           {/* PAYMENT BUTTON GROUP */}
           <Row gutter={16}>
-            <Col>
-              <Button
-                size="large"
-                icon={<ShoppingCartOutlined />}
-                className="text-primary border-primary hover:!text-primary-500 hover:!border-primary-500 w-48"
-                onClick={() => {
-                  product && addToCart({ ...product, quantity });
-                  message.success("Item is added to cart!");
-                }}
-              >
-                Add to cart
-              </Button>
-            </Col>
-            <Col>
-              <Button
-                type="primary"
-                className="w-48 bg-primary"
-                size="large"
-                onClick={() =>
-                  navigate("/checkout", {
-                    state: { orders: [{ ...product, quantity }] },
-                  })
-                }
-              >
-                Checkout
-              </Button>
-            </Col>
+            {product && product?.inventory > 0 ? (
+              <>
+                <Col>
+                  <Button
+                    size="large"
+                    icon={<ShoppingCartOutlined />}
+                    className="text-primary border-primary hover:!text-primary-500 hover:!border-primary-500 w-48"
+                    onClick={() => {
+                      product && addToCart({ ...product, quantity });
+                      message.success("Item is added to cart!");
+                    }}
+                  >
+                    Add to cart
+                  </Button>
+                </Col>
+                <Col>
+                  <Button
+                    type="primary"
+                    className="w-48 bg-primary"
+                    size="large"
+                    onClick={() =>
+                      navigate("/checkout", {
+                        state: { orders: [{ ...product, quantity }] },
+                      })
+                    }
+                  >
+                    Checkout
+                  </Button>
+                </Col>
+              </>
+            ) : (
+              <span className="text-3xl text-red-400">Out of stock</span>
+            )}
           </Row>
         </Col>
       </Row>

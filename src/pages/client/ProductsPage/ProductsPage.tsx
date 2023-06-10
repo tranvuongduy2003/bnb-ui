@@ -17,6 +17,9 @@ const ProductsPage: React.FunctionComponent = () => {
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const products = useProductStore((state) => state.products);
   const filteredProducts = useProductStore((state) => state.filteredProducts);
+  const setFilteredProducts = useProductStore(
+    (state) => state.setFilteredProducts
+  );
   const setProducts = useProductStore((state) => state.setProducts);
   const setSortBy = useProductStore((state) => state.setSortBy);
   const setCategories = useCategoriesStore((state) => state.setCategories);
@@ -26,46 +29,42 @@ const ProductsPage: React.FunctionComponent = () => {
 
   const fetchProductData = useRef<any>();
 
-  fetchProductData.current = async () => {
-    setIsLoading(true);
-    try {
-      const { data: productData } = await getAllProducts();
-      const { data: categoryData } = await getAllCategories();
-      const { data: brandData } = await getAllBrands();
+  useEffect(() => {
+    fetchProductData.current = async () => {
+      setIsLoading(true);
+      try {
+        const { data: productData } = await getAllProducts();
+        const { data: categoryData } = await getAllCategories();
+        const { data: brandData } = await getAllBrands();
 
-      setProducts(productData);
-      setCategories(categoryData);
-      setBrands(brandData);
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      console.log(error);
-    }
-  };
+        setProducts(productData);
+        setCategories(categoryData);
+        setBrands(brandData);
+        setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        console.log(error);
+      }
+    };
+    fetchProductData.current();
+  }, []);
 
   const handleSearchProduct = async () => {
     setIsLoading(true);
     try {
-      let productData;
       if (searchValue && searchValue !== "") {
         const { data } = await searchProductsByName(searchValue);
-        productData = [...data];
+        setProducts(data);
       } else {
         const { data } = await getAllProducts();
-        productData = [...data];
+        setProducts(data);
       }
-
-      setProducts(productData);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    fetchProductData.current();
-  }, []);
 
   return (
     <div>

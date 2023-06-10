@@ -65,6 +65,11 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
     label: item.name,
   }));
 
+  const brandOptions = brands.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
+
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
@@ -200,7 +205,7 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
                     </Space>
                   </>
                 )}
-                options={items.map((item) => ({ label: item, value: item }))}
+                options={brandOptions}
               />
             </Form.Item>
           </Col>

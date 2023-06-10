@@ -1,8 +1,9 @@
+import { changeUserStatus } from "@/apis/user.api";
 import UserStatucTag from "@/components/ClientStatusTag";
 import { IUser } from "@/interfaces/IUser";
 import { useClientStore } from "@/stores/useClientStore";
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Input, InputRef, Space, Table } from "antd";
+import { Button, Input, InputRef, Space, Table, notification } from "antd";
 import {
   ColumnType,
   ColumnsType,
@@ -10,10 +11,13 @@ import {
 } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
+import { useNavigate } from "react-router-dom";
 
 type DataIndex = keyof IUser;
 
 const ClientTable: React.FunctionComponent = () => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
   const searchInput = useRef<InputRef>(null);
@@ -34,6 +38,28 @@ const ClientTable: React.FunctionComponent = () => {
   const handleReset = (clearFilters: () => void) => {
     clearFilters();
     setSearchText("");
+  };
+
+  const handleChangeUserStatus = async (
+    userId: string | number,
+    status: boolean
+  ) => {
+    setIsLoading(true);
+    try {
+      await changeUserStatus(userId, status);
+      setIsLoading(false);
+      notification.success({
+        message: "Deactive account successfully!",
+        duration: 0.25,
+        onClose: () => navigate(0),
+      });
+    } catch (error: any) {
+      console.log(error);
+      setIsLoading(false);
+      notification.error({
+        message: error.message,
+      });
+    }
   };
 
   const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<IUser> => ({
@@ -197,13 +223,19 @@ const ClientTable: React.FunctionComponent = () => {
       render: (value, record, index) =>
         value ? (
           <Button
+            loading={isLoading}
+            onClick={() => handleChangeUserStatus(record.id, false)}
             danger
             className="hover:!border-red-500 hover:!text-white hover:!bg-red-500 w-full"
           >
             Deactivate
           </Button>
         ) : (
-          <Button className="w-full text-green-600 border-green-600 hover:!border-green-600 hover:!text-white hover:!bg-green-600">
+          <Button
+            loading={isLoading}
+            onClick={() => handleChangeUserStatus(record.id, true)}
+            className="w-full text-green-600 border-green-600 hover:!border-green-600 hover:!text-white hover:!bg-green-600"
+          >
             Activate
           </Button>
         ),

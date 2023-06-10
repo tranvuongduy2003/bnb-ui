@@ -1,4 +1,5 @@
 import { getAllReviews } from "@/apis/product.api";
+import { IRatingPoint } from "@/interfaces/IReview";
 import { useReviewStore } from "@/stores/useReviewStore";
 import { StarFilled } from "@ant-design/icons";
 import {
@@ -17,16 +18,13 @@ interface IReviewsProps {
   productId: number | string;
 }
 
-type RatingPoint = {
-  level: number;
-  percents: string;
-};
-
 const perPage = 3;
 
 const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
   const reviews = useReviewStore((state) => state.reviews);
   const setReviews = useReviewStore((state) => state.setReviews);
+  const ratingPoints = useReviewStore((state) => state.ratingPoints);
+  const setRatingPoints = useReviewStore((state) => state.setRatingPoints);
 
   const [reviewRates, setReviewRates] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -38,6 +36,8 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
       try {
         const { data } = await getAllReviews(productId);
         const { reviews, ratingPoint } = data;
+
+        setRatingPoints(ratingPoint);
         setReviews(reviews);
         calculateRating(ratingPoint);
       } catch (error: any) {
@@ -47,11 +47,15 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
     fetchReviewsData.current();
   }, []);
 
-  const calculateRating = (rating: RatingPoint[]) => {
+  useEffect(() => {
+    calculateRating(ratingPoints);
+  }, [reviews]);
+
+  const calculateRating = (rating: IRatingPoint[]) => {
     const rates: number[] = [0, 0, 0, 0, 0];
 
     rating.forEach((item) => {
-      rates[5 - item.level - 1] = JSON.parse(item.percents) * 100;
+      rates[5 - item.level] = JSON.parse(item.percents) * 100;
     });
 
     setReviewRates(() => [...rates]);
@@ -86,7 +90,7 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
                   key={index}
                   className="flex items-center justify-between gap-3"
                 >
-                  <span className="text-xl leading-none">{index + 1}</span>
+                  <span className="text-xl leading-none">{5 - index}</span>
                   <StarFilled className="text-2xl text-rating !leading-none" />
                   <Progress
                     percent={rate}

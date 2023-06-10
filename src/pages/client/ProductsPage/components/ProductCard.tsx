@@ -35,30 +35,47 @@ const ProductCard: React.FunctionComponent<IProductCardProps> = ({ data }) => {
       }
       onClick={handleClickCart}
     >
-      <Typography.Title level={4} style={{ margin: 0 }}>
-        {data.name}
-      </Typography.Title>
-      <p className="mt-2 mb-4 text-xs leading-5 text-neutral-500">
-        {data.desc}
-      </p>
-      <div className="flex items-center justify-between">
-        <Typography.Title level={3} style={{ margin: 0, fontWeight: 700 }}>
-          {`${new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          }).format(JSON.parse(data.price as string))}`}
-        </Typography.Title>
-        <Button
-          ref={buttonRef}
-          type="primary"
-          className="bg-primary"
-          onClick={() => {
-            addToCart({ ...data, quantity: 1 });
-            message.success("Item is added to cart!");
-          }}
-        >
-          <PlusOutlined />
-        </Button>
+      <div className="flex flex-col h-36">
+        <div className="flex-1">
+          <Typography.Title
+            ellipsis={{ rows: 1 }}
+            level={4}
+            style={{ margin: 0 }}
+          >
+            {data.name}
+          </Typography.Title>
+          <Typography.Paragraph
+            ellipsis={{ rows: 3 }}
+            className="mt-2 mb-4 text-xs leading-5 text-neutral-500"
+          >
+            {data.desc}
+          </Typography.Paragraph>
+        </div>
+        <div className="flex items-center justify-between">
+          <Typography.Title level={3} style={{ margin: 0, fontWeight: 700 }}>
+            {`${new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(JSON.parse(data.price as string))}`}
+          </Typography.Title>
+          {data.inventory > 0 ? (
+            <Button
+              ref={buttonRef}
+              type="primary"
+              className="bg-primary"
+              onClick={() => {
+                addToCart({ ...data, quantity: 1 });
+                message.success("Item is added to cart!");
+              }}
+            >
+              <PlusOutlined />
+            </Button>
+          ) : (
+            <div className="px-3 py-2 text-base font-semibold text-red-400 border-2 border-red-400 border-solid rounded-md">
+              Sold out
+            </div>
+          )}
+        </div>
       </div>
     </Card>
   );

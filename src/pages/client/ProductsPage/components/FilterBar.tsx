@@ -142,7 +142,7 @@ const FilterBar: React.FunctionComponent = () => {
     }
 
     setFilteredProducts(changedProducts);
-  }, [products, categoryValue, brandValue, ratingValue, limit, sortBy]);
+  }, [categoryValue, brandValue, ratingValue, limit, sortBy]);
 
   return (
     <div className="w-full p-4 rounded-md shadow-md">

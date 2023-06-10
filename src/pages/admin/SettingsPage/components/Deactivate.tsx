@@ -1,8 +1,8 @@
 import { changeUserStatus } from "@/apis/user.api";
-import { AuthContext } from "@/context/AuthProvider";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { logOut } from "@/utils/auth";
 import { Button, notification } from "antd";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 
 const Deactivate: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -10,12 +10,10 @@ const Deactivate: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
   const setProfile = useAuthStore((state) => state.setProfile);
 
-  const { logOut } = useContext(AuthContext) as any;
-
   const handleDeactiveUser = async () => {
     setIsLoading(true);
     try {
-      const { data } = await changeUserStatus(profile.id, true);
+      const { data } = await changeUserStatus(profile?.id as any, true);
       setProfile(data);
       setIsLoading(false);
       notification.success({

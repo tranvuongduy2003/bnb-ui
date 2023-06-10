@@ -9,3 +9,8 @@ export interface IReview {
   createdAt: string | Date;
   updatedAt: string | Date;
 }
+
+export interface IRatingPoint {
+  level: number;
+  percents: string;
+}

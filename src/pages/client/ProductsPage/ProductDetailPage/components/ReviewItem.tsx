@@ -19,7 +19,7 @@ const ReviewItem: React.FunctionComponent<IReviewItemProps> = ({ data }) => {
               {data.userName || "Lorem"}
             </span>
           </div>
-          <Rate value={data.rating} allowHalf />
+          <Rate value={data.rating} allowHalf disabled />
         </Col>
       </Row>
       <Row>

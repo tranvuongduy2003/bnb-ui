@@ -12,7 +12,7 @@ type State = {
 type Action = {
   setProduct: (updatedProduct: IProduct) => void;
   setProducts: (updatedProducts: IProduct[]) => void;
-  setFilteredProducts: (updatedProducts: IProduct[]) => void;
+  setFilteredProducts: (updatedProducts: IProduct[] | null) => void;
   setSortBy: (value: string) => void;
 };
 
@@ -30,7 +30,7 @@ export const useProductStore = create(
       set((state) => {
         state.products = updatedProducts;
       }),
-    setFilteredProducts: (updatedProducts: IProduct[]) =>
+    setFilteredProducts: (updatedProducts: IProduct[] | null) =>
       set((state) => {
         state.filteredProducts = updatedProducts;
       }),

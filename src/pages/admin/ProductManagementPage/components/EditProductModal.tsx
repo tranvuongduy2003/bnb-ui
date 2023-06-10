@@ -88,7 +88,7 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
         );
         setProduct(productData);
         setFileList(files);
-        setIsLoading(false);
+        if (product) setIsLoading(false);
       } catch (error) {
         setIsLoading(false);
         console.log(error);
@@ -229,9 +229,7 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
               <Form.Item
                 name="importPrice"
                 label="Import price"
-                initialValue={JSON.parse(
-                  (product?.importPrice as string) || "0"
-                )}
+                initialValue={product?.importPrice}
               >
                 <InputNumber
                   min={0}
@@ -244,7 +242,7 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
               <Form.Item
                 name="price"
                 label="Price"
-                initialValue={JSON.parse(product?.price as string)}
+                initialValue={product?.price}
               >
                 <InputNumber min={0} placeholder="Price" className="w-full" />
               </Form.Item>
