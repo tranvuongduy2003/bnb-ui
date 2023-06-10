@@ -40,13 +40,15 @@ const ProductOrderItem: React.FunctionComponent<IProductOrderItemProps> = ({
         ).format(JSON.parse(data.sumPrice))}`}</span>
       </Col>
       <Col className="flex flex-col items-stretch gap-3">
-        <Button type="primary" className="shadow-none bg-primary-500">
+        <Button
+          onClick={() => navigate(`/product/${data.id}`)}
+          type="primary"
+          className="shadow-none bg-primary-500"
+        >
           Buy again
         </Button>
         <Button
-          onClick={() =>
-            navigate("/product/detail", { state: { productId: data.id } })
-          }
+          onClick={() => navigate(`/product/${data.id}`)}
           type="primary"
           className="shadow-none bg-neutral-200 text-neutral-600"
         >

@@ -3,19 +3,25 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
 type State = {
-  products: IProduct[];
   product: IProduct | null;
+  products: IProduct[];
+  filteredProducts: IProduct[] | null;
+  sortBy: string;
 };
 
 type Action = {
   setProduct: (updatedProduct: IProduct) => void;
   setProducts: (updatedProducts: IProduct[]) => void;
+  setFilteredProducts: (updatedProducts: IProduct[]) => void;
+  setSortBy: (value: string) => void;
 };
 
 export const useProductStore = create(
   immer<State & Action>((set) => ({
     product: null,
     products: [],
+    filteredProducts: null,
+    sortBy: "low",
     setProduct: (updatedProduct: IProduct) =>
       set((state) => {
         state.product = updatedProduct;
@@ -23,6 +29,14 @@ export const useProductStore = create(
     setProducts: (updatedProducts: IProduct[]) =>
       set((state) => {
         state.products = updatedProducts;
+      }),
+    setFilteredProducts: (updatedProducts: IProduct[]) =>
+      set((state) => {
+        state.filteredProducts = updatedProducts;
+      }),
+    setSortBy: (value: string) =>
+      set((state) => {
+        state.sortBy = value;
       }),
   }))
 );

@@ -1,3 +1,8 @@
+import { cancelOrder, getAllOrders } from "@/apis/order.api";
+import StatusTag from "@/components/StatusTag";
+import { Status } from "@/constants/status";
+import { useAppStore } from "@/stores/useAppStore";
+import { useOrdersStore } from "@/stores/useOrderStore";
 import {
   Button,
   Col,
@@ -9,13 +14,8 @@ import {
   notification,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { useAppStore } from "@/stores/useAppStore";
-import { useOrdersStore } from "@/stores/useOrderStore";
-import { getAllOrders } from "@/apis/order.api";
-import ProductOrderItem from "./components/ProductOrderItem";
-import StatusTag from "@/components/StatusTag";
 import { useNavigate } from "react-router-dom";
-import { Status } from "@/constants/status";
+import ProductOrderItem from "./components/ProductOrderItem";
 
 const perPage = 4;
 
@@ -46,8 +46,9 @@ const OrderHistoryPage: React.FunctionComponent = () => {
     fetchOrderData.current();
   }, []);
 
-  const handleCancelOrder = async () => {
+  const handleCancelOrder = async (orderId: string | number) => {
     try {
+      await cancelOrder(orderId);
       notification.success({
         message: "Cancel order successfully!",
         duration: 0.25,
@@ -103,7 +104,11 @@ const OrderHistoryPage: React.FunctionComponent = () => {
               </Collapse.Panel>
               <div className="flex items-center justify-end gap-5 pb-5 mb-10 border-0 border-b border-solid border-neutral-300">
                 {order.status === Status.PENDING && (
-                  <Button danger type="primary">
+                  <Button
+                    danger
+                    type="primary"
+                    onClick={() => handleCancelOrder(order.id)}
+                  >
                     Cancel order
                   </Button>
                 )}

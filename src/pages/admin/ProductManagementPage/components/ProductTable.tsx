@@ -1,4 +1,6 @@
+import CategoryTag from "@/components/CategoryTag";
 import { IProduct } from "@/interfaces/IProduct";
+import { useProductStore } from "@/stores/useProductStore";
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, InputRef, Rate, Space, Table } from "antd";
 import {
@@ -8,9 +10,7 @@ import {
 } from "antd/es/table/interface";
 import React, { useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
-import CategoryTag from "@/components/CategoryTag";
 import EditProductModal from "./EditProductModal";
-import { useProductStore } from "@/stores/useProductStore";
 
 type DataIndex = keyof IProduct;
 
@@ -166,20 +166,6 @@ const ProductTable: React.FunctionComponent = () => {
       ),
     },
     {
-      title: "Import Price",
-      dataIndex: "importPrice",
-      key: "importPrice",
-      width: "10%",
-      sorter: (a: any, b: any) => a - b,
-      sortDirections: ["descend", "ascend"],
-      render: (value, record, index) => (
-        <span>{`${new Intl.NumberFormat("vi-VN", {
-          style: "currency",
-          currency: "VND",
-        }).format(value)}`}</span>
-      ),
-    },
-    {
       title: "Price",
       dataIndex: "price",
       key: "price",
@@ -208,19 +194,19 @@ const ProductTable: React.FunctionComponent = () => {
       width: "5%",
       sorter: (a: any, b: any) => a - b,
       sortDirections: ["descend", "ascend"],
-      render: (value, record, index) => record.inventory - record.sold,
+      render: (value, record, index) => record.inventory,
     },
-    // {
-    //   title: "Rating",
-    //   dataIndex: "rating",
-    //   key: "rating",
-    //   width: "15%",
-    //   sorter: (a: any, b: any) => a - b,
-    //   sortDirections: ["descend", "ascend"],
-    //   render: (value, record, index) => (
-    //     <Rate allowHalf disabled defaultValue={value} />
-    //   ),
-    // },
+    {
+      title: "Rating",
+      dataIndex: "avgRating",
+      key: "avgRating",
+      width: "15%",
+      sorter: (a: any, b: any) => a - b,
+      sortDirections: ["descend", "ascend"],
+      render: (value, record, index) => (
+        <Rate allowHalf disabled defaultValue={value} />
+      ),
+    },
     {
       title: "",
       dataIndex: "edit",

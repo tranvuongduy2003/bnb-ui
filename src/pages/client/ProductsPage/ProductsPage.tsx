@@ -1,40 +1,64 @@
-import React, { useEffect, useRef } from "react";
-import Banner from "./components/Banner";
-import { Button, Card, Col, Input, List, Row, Select, Spin } from "antd";
-import FilterBar from "./components/FilterBar";
-import { SearchOutlined } from "@ant-design/icons";
-import ProductCard from "./components/ProductCard";
-import { useProductStore } from "@/stores/useProductStore";
+import { getAllCategories } from "@/apis/category.api";
+import { getAllProducts, searchProductsByName } from "@/apis/product.api";
 import { useAppStore } from "@/stores/useAppStore";
 import { useCategoriesStore } from "@/stores/useCategoryStore";
-import { getAllProducts } from "@/apis/product.api";
-import { getAllCategories } from "@/apis/category.api";
+import { useProductStore } from "@/stores/useProductStore";
+import { SearchOutlined } from "@ant-design/icons";
+import { Button, Col, Input, List, Row, Select, Skeleton, Spin } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import Banner from "./components/Banner";
+import FilterBar from "./components/FilterBar";
+import ProductCard from "./components/ProductCard";
 
 const ProductsPage: React.FunctionComponent = () => {
   const isLoading = useAppStore((state) => state.isLoading);
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const products = useProductStore((state) => state.products);
+  const filteredProducts = useProductStore((state) => state.filteredProducts);
   const setProducts = useProductStore((state) => state.setProducts);
-  const categories = useCategoriesStore((state) => state.categories);
+  const setSortBy = useProductStore((state) => state.setSortBy);
   const setCategories = useCategoriesStore((state) => state.setCategories);
+
+  const [searchValue, setSearchValue] = useState<string>("");
 
   const fetchProductData = useRef<any>();
 
-  useEffect(() => {
-    fetchProductData.current = async () => {
-      setIsLoading(true);
-      try {
-        const { data: productData } = await getAllProducts();
-        const { data: categoryData } = await getAllCategories();
+  fetchProductData.current = async () => {
+    setIsLoading(true);
+    try {
+      const { data: productData } = await getAllProducts();
+      const { data: categoryData } = await getAllCategories();
 
-        setProducts(productData);
-        setCategories(categoryData);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-        console.log(error);
+      setProducts(productData);
+      setCategories(categoryData);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  };
+
+  const handleSearchProduct = async () => {
+    setIsLoading(true);
+    try {
+      let productData;
+      if (searchValue && searchValue !== "") {
+        const { data } = await searchProductsByName(searchValue);
+        productData = [...data];
+      } else {
+        const { data } = await getAllProducts();
+        productData = [...data];
       }
-    };
+
+      setProducts(productData);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
     fetchProductData.current();
   }, []);
 
@@ -42,9 +66,7 @@ const ProductsPage: React.FunctionComponent = () => {
     <div>
       <Banner />
       <Row className="my-10 px-28" gutter={56}>
-        <Col span={6}>
-          <FilterBar />
-        </Col>
+        <Col span={6}>{isLoading ? <Skeleton /> : <FilterBar />}</Col>
         <Col span={18}>
           <Row gutter={16}>
             <Col flex={1}>
@@ -52,10 +74,16 @@ const ProductsPage: React.FunctionComponent = () => {
                 size="large"
                 prefix={<SearchOutlined />}
                 placeholder="Search..."
+                onChange={(e) => setSearchValue(e.target.value)}
               />
             </Col>
             <Col className="w-40">
-              <Button type="primary" className="w-full bg-primary" size="large">
+              <Button
+                onClick={handleSearchProduct}
+                type="primary"
+                className="w-full bg-primary"
+                size="large"
+              >
                 Search
               </Button>
             </Col>
@@ -63,7 +91,9 @@ const ProductsPage: React.FunctionComponent = () => {
           <div className="flex items-center justify-between mt-10 mb-6">
             <div className="flex items-center gap-2">
               <span className="text-2xl text-neutral-900">Product Results</span>
-              <span className="text-xs text-neutral-500">1001 products</span>
+              <span className="text-xs text-neutral-500">{`${
+                filteredProducts ? filteredProducts.length : products.length
+              } products`}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-base text-neutral-500">Sort by</span>
@@ -77,6 +107,7 @@ const ProductsPage: React.FunctionComponent = () => {
                   { value: "last", label: "Last posted" },
                   { value: "newest", label: "Newest posted" },
                 ]}
+                onChange={(value) => setSortBy(value)}
               />
             </div>
           </div>
@@ -89,7 +120,7 @@ const ProductsPage: React.FunctionComponent = () => {
                 align: "center",
                 defaultPageSize: 9,
               }}
-              dataSource={products}
+              dataSource={filteredProducts || products}
               renderItem={(item) => (
                 <List.Item>
                   <ProductCard data={item} />

@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Button, Col, Row, Spin, Typography } from "antd";
-import SummaryCard from "./components/SummaryCard";
-import ProductTable from "./components/ProductTable";
-import { getAllProducts } from "@/apis/product.api";
-import AddProductModal from "./components/AddProductModal";
-import { useAppStore } from "@/stores/useAppStore";
-import { useProductStore } from "@/stores/useProductStore";
-import { useCategoriesStore } from "@/stores/useCategoryStore";
 import { getAllCategories } from "@/apis/category.api";
+import { getAllProducts } from "@/apis/product.api";
+import { useAppStore } from "@/stores/useAppStore";
+import { useCategoriesStore } from "@/stores/useCategoryStore";
+import { useProductStore } from "@/stores/useProductStore";
+import { Button, Col, Row, Spin, Typography } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import AddProductModal from "./components/AddProductModal";
+import ProductTable from "./components/ProductTable";
+import SummaryCard from "./components/SummaryCard";
 
 const ProductManagementPage: React.FunctionComponent = () => {
   const [show, setShow] = useState<boolean>(false);
@@ -79,10 +79,7 @@ const ProductManagementPage: React.FunctionComponent = () => {
               }).format(
                 products
                   ? products
-                      .map(
-                        (item) =>
-                          JSON.parse(item.price as string) * item.inventory
-                      )
+                      .map((item) => JSON.parse(item.price as string))
                       .reduce(
                         (accumulator, currentValue) =>
                           accumulator + currentValue,

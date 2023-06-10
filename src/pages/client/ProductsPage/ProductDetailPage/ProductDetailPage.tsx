@@ -1,3 +1,12 @@
+import { getProductById } from "@/apis/product.api";
+import { useAppStore } from "@/stores/useAppStore";
+import { useCartStore } from "@/stores/useCartStore";
+import { useProductStore } from "@/stores/useProductStore";
+import {
+  MinusOutlined,
+  PlusOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Col,
@@ -7,21 +16,12 @@ import {
   Row,
   Skeleton,
   Spin,
-  Tag,
   Typography,
+  message,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import {
-  PlusOutlined,
-  MinusOutlined,
-  ShoppingCartOutlined,
-} from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import { useCartStore } from "@/stores/useCartStore";
-import { useProductStore } from "@/stores/useProductStore";
 import Reviews from "./components/Reviews";
-import { useAppStore } from "@/stores/useAppStore";
-import { getProductById } from "@/apis/product.api";
 
 const ProductDetailPage: React.FunctionComponent = () => {
   const navigate = useNavigate();
@@ -58,7 +58,6 @@ const ProductDetailPage: React.FunctionComponent = () => {
   const [color, setColor] = useState<string>();
 
   // type
-  const types = ["men", "women"];
   const [type, setType] = useState<string>();
   const handleTypeChange = (e: RadioChangeEvent) => {
     setType(e.target.value);
@@ -227,7 +226,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
                 style: "currency",
                 currency: "VND",
               }
-            ).format(product?.price || 0)}`}</span>
+            ).format(JSON.parse((product?.price as string) || "0"))}`}</span>
           </Row>
 
           {/* PAYMENT BUTTON GROUP */}
@@ -237,7 +236,10 @@ const ProductDetailPage: React.FunctionComponent = () => {
                 size="large"
                 icon={<ShoppingCartOutlined />}
                 className="text-primary border-primary hover:!text-primary-500 hover:!border-primary-500 w-48"
-                onClick={() => product && addToCart({ ...product, quantity })}
+                onClick={() => {
+                  product && addToCart({ ...product, quantity });
+                  message.success("Item is added to cart!");
+                }}
               >
                 Add to cart
               </Button>

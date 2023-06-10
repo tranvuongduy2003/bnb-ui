@@ -1,27 +1,45 @@
-import { Checkbox, Col, Collapse, Form, Input, Rate, Row, Slider } from "antd";
+import { IProduct } from "@/interfaces/IProduct";
+import { useCategoriesStore } from "@/stores/useCategoryStore";
+import { useProductStore } from "@/stores/useProductStore";
+import { Checkbox, Col, Collapse, InputNumber, Rate, Row, Slider } from "antd";
 import { CheckboxValueType } from "antd/es/checkbox/Group";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 const { Panel } = Collapse;
 
 // interface IFilterBarProps {}
 
 const FilterBar: React.FunctionComponent = () => {
+  const products = useProductStore((state) => state.products);
+  const setFilteredProducts = useProductStore(
+    (state) => state.setFilteredProducts
+  );
+
+  // Sort by
+  const sortBy = useProductStore((state) => state.sortBy);
+
   // Price range
-  const [range, setRange] = useState<[number, number]>([0, 600]);
+  const maxPrice = Math.max(
+    ...products.map((item) => JSON.parse(item.price as string))
+  );
+  const [range, setRange] = useState<[number, number]>([0, 100]);
   const onChange = (value: [number, number]) => {
     setRange(value);
   };
-  const onAfterChange = (value: [number, number]) => {
-    console.log("onAfterChange: ", value);
+  const onAfterChange = () => {
+    setLimit([
+      Math.round(range[0] * (maxPrice / 100)),
+      Math.round(range[1] * (maxPrice / 100)),
+    ]);
   };
 
   // Category
-  const categories = [
-    { label: "Perfume", value: "perfume" },
-    { label: "Cosmetic", value: "cosmetic" },
-  ];
+  const categories = useCategoriesStore((state) => state.categories);
+  const categoryOptions = categories.map((item) => ({
+    value: item.id,
+    label: item.name,
+  }));
   const onCategoryChange = (checkedValues: CheckboxValueType[]) => {
-    console.log("checked = ", checkedValues);
+    setCategoryValue(checkedValues);
   };
 
   // Brand
@@ -30,6 +48,7 @@ const FilterBar: React.FunctionComponent = () => {
     { label: "Louis Vuitton", value: "louis_vuitton" },
     { label: "Gucci", value: "gucci" },
   ];
+
   const onBrandChange = (checkedValues: CheckboxValueType[]) => {
     console.log("checked = ", checkedValues);
   };
@@ -42,6 +61,63 @@ const FilterBar: React.FunctionComponent = () => {
     { value: 2 },
     { value: 1 },
   ];
+
+  const [categoryValue, setCategoryValue] = useState<CheckboxValueType[]>(
+    categoryOptions.map((item) => item.value)
+  );
+  const [limit, setLimit] = useState<[number, number]>([
+    Math.round(range[0] * (maxPrice / 100)),
+    Math.round(range[1] * (maxPrice / 100)),
+  ]);
+
+  useEffect(() => {
+    let changedProducts: IProduct[] = [...products];
+
+    changedProducts = changedProducts.filter((item) => {
+      const itemPrice = JSON.parse(item.price as string);
+      return limit && itemPrice >= limit[0] && itemPrice <= limit[1];
+    });
+
+    changedProducts = changedProducts.filter((item) => {
+      return categoryValue?.includes(item.categoryId);
+    });
+
+    switch (sortBy) {
+      case "low":
+        changedProducts = changedProducts.sort(
+          (a, b) =>
+            JSON.parse(a.price as string) - JSON.parse(b.price as string)
+        );
+        break;
+      case "high":
+        changedProducts = changedProducts.sort(
+          (a, b) =>
+            JSON.parse(b.price as string) - JSON.parse(a.price as string)
+        );
+        break;
+
+      case "last":
+        changedProducts = changedProducts.sort((a, b) => {
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          return dateA.getTime() - dateB.getTime();
+        });
+        break;
+
+      case "newest":
+        changedProducts = changedProducts.sort((a, b) => {
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          return dateA.getTime() - dateB.getTime();
+        });
+        break;
+
+      default:
+        break;
+    }
+
+    setFilteredProducts(changedProducts);
+  }, [products, categoryValue, limit, sortBy]);
 
   return (
     <div className="w-full p-4 rounded-md shadow-md">
@@ -73,13 +149,21 @@ const FilterBar: React.FunctionComponent = () => {
             className="p-0 m-0 text-base font-bold"
           >
             <div className="flex items-center justify-between w-full gap-4 font-normal">
-              <Input disabled value={range[0]} />
+              <InputNumber
+                value={Math.round(range[0] * (maxPrice / 100))}
+                min={0}
+                max={maxPrice}
+              />
               <span>to</span>
-              <Input disabled value={range[1]} />
+              <InputNumber
+                value={Math.round(range[1] * (maxPrice / 100))}
+                min={range[0]}
+              />
             </div>
             <Slider
               range
-              defaultValue={range}
+              tooltip={{ open: false }}
+              value={range}
               onChange={onChange}
               onAfterChange={onAfterChange}
             />
@@ -101,9 +185,9 @@ const FilterBar: React.FunctionComponent = () => {
             className="p-0 m-0 text-base font-bold"
           >
             <Checkbox.Group
-              options={categories}
-              defaultValue={["perfume"]}
+              options={categoryOptions}
               onChange={onCategoryChange}
+              defaultValue={categoryValue}
               className="flex flex-col gap-2 font-normal"
             />
           </Panel>
@@ -121,7 +205,7 @@ const FilterBar: React.FunctionComponent = () => {
           <Panel header="Brand" key="1" className="p-0 m-0 text-base font-bold">
             <Checkbox.Group
               options={brands}
-              defaultValue={["channel", "louis_vuitton"]}
+              defaultValue={brands.map((item) => item.value)}
               onChange={onBrandChange}
               className="flex flex-col gap-2 font-normal"
             />
@@ -143,7 +227,7 @@ const FilterBar: React.FunctionComponent = () => {
             className="p-0 m-0 text-base font-bold"
           >
             <Checkbox.Group
-              defaultValue={[5]}
+              defaultValue={rating.map((item) => item.value)}
               onChange={onBrandChange}
               className="flex flex-col gap-2"
             >

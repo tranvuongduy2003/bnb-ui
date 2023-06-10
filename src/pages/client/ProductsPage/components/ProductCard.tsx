@@ -1,7 +1,7 @@
 import { IProduct } from "@/interfaces/IProduct";
 import { useCartStore } from "@/stores/useCartStore";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, Card, Typography } from "antd";
+import { Button, Card, Typography, message } from "antd";
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -46,13 +46,16 @@ const ProductCard: React.FunctionComponent<IProductCardProps> = ({ data }) => {
           {`${new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND",
-          }).format(data.price)}`}
+          }).format(JSON.parse(data.price as string))}`}
         </Typography.Title>
         <Button
           ref={buttonRef}
           type="primary"
           className="bg-primary"
-          onClick={() => addToCart({ ...data, quantity: 1 })}
+          onClick={() => {
+            addToCart({ ...data, quantity: 1 });
+            message.success("Item is added to cart!");
+          }}
         >
           <PlusOutlined />
         </Button>

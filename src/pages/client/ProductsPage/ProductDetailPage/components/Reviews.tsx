@@ -10,12 +10,17 @@ import {
   Typography,
 } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import ReviewItem from "./ReviewItem";
 import PostReview from "./PostReview";
+import ReviewItem from "./ReviewItem";
 
 interface IReviewsProps {
   productId: number | string;
 }
+
+type RatingPoint = {
+  level: number;
+  percents: string;
+};
 
 const perPage = 3;
 
@@ -32,8 +37,9 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
     fetchReviewsData.current = async () => {
       try {
         const { data } = await getAllReviews(productId);
-        setReviews(data);
-        calculateRating(data.map((item: any) => item.rating));
+        const { reviews, ratingPoint } = data;
+        setReviews(reviews);
+        calculateRating(ratingPoint);
       } catch (error: any) {
         console.log(error);
       }
@@ -41,26 +47,14 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
     fetchReviewsData.current();
   }, []);
 
-  const calculateRating = (rating: number[]) => {
+  const calculateRating = (rating: RatingPoint[]) => {
     const rates: number[] = [0, 0, 0, 0, 0];
 
     rating.forEach((item) => {
-      if (item > 4) {
-        rates[4]++;
-      } else if (item > 3) {
-        rates[3]++;
-      } else if (item > 2) {
-        rates[2]++;
-      } else if (item > 1) {
-        rates[1]++;
-      } else if (item > 0) {
-        rates[0]++;
-      }
+      rates[5 - item.level - 1] = JSON.parse(item.percents) * 100;
     });
 
-    const calculatedRates = rates.map((item) => (item / reviews.length) * 100);
-
-    setReviewRates(() => [...calculatedRates]);
+    setReviewRates(() => [...rates]);
   };
 
   const onChangePage: PaginationProps["onChange"] = (pageNumber) => {
@@ -80,7 +74,11 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
               className="text-center"
               style={{ margin: 0, marginBottom: 40 }}
             >
-              4.5
+              {(
+                reviews
+                  .map((item) => item.rating)
+                  .reduce((prev, cur) => prev + cur, 0) / reviews.length
+              ).toFixed(1)}
             </Typography.Title>
             <div className="flex flex-col gap-4">
               {reviewRates.map((rate, index) => (
