@@ -217,7 +217,10 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
             <Button
               type="primary"
               loading={isLoading}
-              onClick={() => form.submit()}
+              onClick={() => {
+                setIsLoading(true);
+                form.submit();
+              }}
             >
               Save
             </Button>
