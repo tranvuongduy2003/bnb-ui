@@ -94,7 +94,7 @@ const DashboardPage: React.FunctionComponent = () => {
             }).format(
               statistics?.totalProfit
                 .map((item) => JSON.parse(item.profit))
-                .reduce((prev, cur) => prev + cur)
+                .reduce((prev, cur) => prev + cur) || 0
             )}
           />
         </Col>
@@ -108,7 +108,7 @@ const DashboardPage: React.FunctionComponent = () => {
             }).format(
               statistics?.totalProfit
                 .map((item) => JSON.parse(item.revenue))
-                .reduce((prev, cur) => prev + cur)
+                .reduce((prev, cur) => prev + cur) || 0
             )}
           />
         </Col>

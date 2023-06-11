@@ -5,12 +5,12 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCXIUJMLNHedprMBYo-1yit0gLp2ONCb9s",
-  authDomain: "bnb-uit.firebaseapp.com",
-  projectId: "bnb-uit",
-  storageBucket: "bnb-uit.appspot.com",
-  messagingSenderId: "425374593612",
-  appId: "1:425374593612:web:68c95cec4f5eb12fe73ae9",
+  apiKey: import.meta.env.API_KEY,
+  authDomain: import.meta.env.AUTH_DOMAIN,
+  projectId: import.meta.env.PROJECT_ID,
+  storageBucket: import.meta.env.STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.MESSAGING_SENDER_ID,
+  appId: import.meta.env.APP_ID,
 };
 
 // Initialize Firebase
