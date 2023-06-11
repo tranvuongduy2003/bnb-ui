@@ -1,4 +1,5 @@
 import { getProductById } from "@/apis/product.api";
+import { Role } from "@/constants/role";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
@@ -33,6 +34,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
   const product = useProductStore((state) => state.product);
   const setProduct = useProductStore((state) => state.setProduct);
   const loggedIn = useAuthStore((state) => state.loggedIn);
+  const profile = useAuthStore((state) => state.profile);
 
   const [previewImage, setPreviewImage] = useState<string>();
 
@@ -180,6 +182,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
               <>
                 <Col>
                   <Button
+                    disabled={profile?.role !== Role.CUSTOMER}
                     size="large"
                     icon={<ShoppingCartOutlined />}
                     className="text-primary border-primary hover:!text-primary-500 hover:!border-primary-500 w-48"
@@ -197,6 +200,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
                 </Col>
                 <Col>
                   <Button
+                    disabled={profile?.role !== Role.CUSTOMER}
                     type="primary"
                     className="w-48 bg-primary"
                     size="large"

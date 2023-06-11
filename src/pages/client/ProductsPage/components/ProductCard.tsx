@@ -1,3 +1,4 @@
+import { Role } from "@/constants/role";
 import { IProduct } from "@/interfaces/IProduct";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
@@ -15,6 +16,7 @@ const ProductCard: React.FunctionComponent<IProductCardProps> = ({ data }) => {
 
   const addToCart = useCartStore((state) => state.addToCart);
   const loggedIn = useAuthStore((state) => state.loggedIn);
+  const profile = useAuthStore((state) => state.profile);
 
   const buttonRef = useRef<any>();
 
@@ -63,6 +65,7 @@ const ProductCard: React.FunctionComponent<IProductCardProps> = ({ data }) => {
           </Typography.Title>
           {data.inventory > 0 ? (
             <Button
+              disabled={profile?.role !== Role.CUSTOMER}
               ref={buttonRef}
               type="primary"
               className="bg-primary"

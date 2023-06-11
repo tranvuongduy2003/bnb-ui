@@ -1,3 +1,4 @@
+import { Role } from "@/constants/role";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
 import { logOut } from "@/utils/auth";
@@ -29,19 +30,16 @@ const Header: React.FunctionComponent = () => {
 
   const items: MenuProps["items"] = [
     {
-      key: "/orders",
-      icon: <BarsOutlined />,
-      onClick: () => {
-        navigate("/orders");
-        setOpen(!open);
-      },
-      label: "Orders",
-    },
-    {
       key: "/settings",
       icon: <SettingOutlined />,
       onClick: () => {
-        navigate("/settings");
+        if (profile?.role === Role.ADMIN) {
+          navigate("/admin/settings");
+        } else if (profile?.role === Role.DELIVERER) {
+          navigate("/delivery/settings");
+        } else {
+          navigate("/settings");
+        }
         setOpen(!open);
       },
       label: "Settings",
@@ -56,6 +54,18 @@ const Header: React.FunctionComponent = () => {
       label: "Logout",
     },
   ];
+
+  if (profile?.role === Role.CUSTOMER) {
+    items.unshift({
+      key: "/orders",
+      icon: <BarsOutlined />,
+      onClick: () => {
+        navigate("/orders");
+        setOpen(!open);
+      },
+      label: "Orders",
+    });
+  }
 
   return (
     <div className="flex justify-between w-full">

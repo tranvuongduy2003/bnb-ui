@@ -1,4 +1,5 @@
 import { getAllReviews } from "@/apis/product.api";
+import { Role } from "@/constants/role";
 import { IRatingPoint } from "@/interfaces/IReview";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useReviewStore } from "@/stores/useReviewStore";
@@ -27,6 +28,7 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
   const ratingPoints = useReviewStore((state) => state.ratingPoints);
   const setRatingPoints = useReviewStore((state) => state.setRatingPoints);
   const loggedIn = useAuthStore((state) => state.loggedIn);
+  const profile = useAuthStore((state) => state.profile);
 
   const [reviewRates, setReviewRates] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -118,7 +120,9 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
                 onChange={onChangePage}
               />
             </div>
-            {loggedIn && <PostReview productId={productId} />}
+            {loggedIn && profile?.role === Role.CUSTOMER && (
+              <PostReview productId={productId} />
+            )}
           </Col>
         </Row>
       </Col>
