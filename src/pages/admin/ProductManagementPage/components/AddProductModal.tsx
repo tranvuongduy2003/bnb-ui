@@ -228,7 +228,7 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
             beforeUpload={beforeUploadFile}
             onChange={onChangeFile}
           >
-            {fileList.length >= 5 ? null : (
+            {fileList.length >= 3 ? null : (
               <div>
                 <UploadOutlined />
                 <div style={{ marginTop: 8 }}>Upload</div>

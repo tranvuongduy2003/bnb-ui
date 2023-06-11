@@ -31,6 +31,7 @@ import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
 import {
   getBlob,
   getDownloadURL,
+  getMetadata,
   getStorage,
   ref,
   uploadBytes,
@@ -85,10 +86,16 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
           productData.images.map(async (item: any) => {
             const fileRef = ref(storage, item);
             const blob = await getBlob(fileRef);
-            const file = new File([blob], fileRef.name, {
-              type: fileRef.name.split(".")[1],
+            const fileData = await getMetadata(fileRef);
+            const file = new File([blob], fileData.name, {
+              type: fileData.contentType,
             });
-            return file;
+            const RcFile: UploadFile = {
+              name: fileData.name,
+              uid: new Date(file.lastModified).toISOString(),
+              originFileObj: file as RcFile,
+            };
+            return RcFile;
           })
         );
         setProduct(productData);
@@ -116,23 +123,25 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
 
   const handleEditNewProduct = async (values: any) => {
     const { images, categoryId, ...rest } = values;
-    const imageURLs = await Promise.all(
-      images.fileList.map(async (image: any) => {
-        const storageRef = ref(
-          storage,
-          `${categoryId === 1 ? "perfume" : "cosmetic"}/${image.name}`
-        );
-        await uploadBytes(storageRef, image.originFileObj);
-        const imageURL = await getDownloadURL(storageRef);
-        return imageURL;
-      })
-    );
+    const imageURLs =
+      images &&
+      (await Promise.all(
+        images?.fileList.map(async (image: any) => {
+          const storageRef = ref(
+            storage,
+            `${categoryId === 1 ? "perfume" : "cosmetic"}/${image.name}`
+          );
+          await uploadBytes(storageRef, image.originFileObj);
+          const imageURL = await getDownloadURL(storageRef);
+          return imageURL;
+        })
+      ));
 
     const payload = {
       ...rest,
       categoryId: categoryId,
-      images: [...imageURLs],
       sold: 0,
+      ...(imageURLs && { images: [...imageURLs] }),
     };
 
     setIsLoading(true);
@@ -245,7 +254,11 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
               <Form.Item
                 name="importPrice"
                 label="Import price"
-                initialValue={product?.importPrice}
+                initialValue={
+                  product && product.importPrice
+                    ? JSON.parse(product.importPrice as string)
+                    : null
+                }
               >
                 <InputNumber
                   min={0}
@@ -258,7 +271,11 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
               <Form.Item
                 name="price"
                 label="Price"
-                initialValue={product?.price}
+                initialValue={
+                  product && product.price
+                    ? JSON.parse(product.price as string)
+                    : null
+                }
               >
                 <InputNumber min={0} placeholder="Price" className="w-full" />
               </Form.Item>
@@ -325,17 +342,17 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
           </Row>
           <Form.Item name="images" label="Product images">
             <Upload
-              listType="text"
+              listType="picture-card"
               fileList={fileList}
               multiple={true}
               beforeUpload={beforeUploadFile}
               onChange={onChangeFile}
             >
               {fileList.length >= 3 ? null : (
-                <Button type="primary">
+                <div>
                   <UploadOutlined />
-                  <span>Upload</span>
-                </Button>
+                  <div style={{ marginTop: 8 }}>Upload</div>
+                </div>
               )}
             </Upload>
           </Form.Item>
