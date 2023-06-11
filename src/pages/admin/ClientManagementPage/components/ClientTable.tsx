@@ -162,7 +162,7 @@ const ClientTable: React.FunctionComponent = () => {
         <div className="flex items-center gap-7">
           <div>
             <img
-              src={record.avatar}
+              src={record.avatar || "/assets/avatar.png"}
               alt="avatar"
               className="object-cover rounded-full w-9 h-9"
             />

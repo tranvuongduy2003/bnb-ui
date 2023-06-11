@@ -4,11 +4,23 @@ import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { notification } from "antd";
 import React from "react";
+import ReactDOM from "react-dom";
 import { useNavigate } from "react-router-dom";
 
 export const AuthContext = React.createContext({});
 
 type NotificationType = "success" | "info" | "warning" | "error";
+
+const MessengerBox = () => {
+  return ReactDOM.createPortal(
+    <>
+      <div id="fb-root"></div>
+
+      <div id="fb-customer-chat" className="fb-customerchat"></div>
+    </>,
+    document.querySelector("body") as Element
+  );
+};
 
 const AuthProvider = ({ children }: any) => {
   const navigate = useNavigate();
@@ -17,6 +29,7 @@ const AuthProvider = ({ children }: any) => {
   const setToken = useAuthStore((state) => state.setToken);
   const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
   const setProfile = useAuthStore((state) => state.setProfile);
+  const profile = useAuthStore((state) => state.profile);
 
   const logIn = async (payload: any) => {
     setIsLoading(true);
@@ -60,6 +73,9 @@ const AuthProvider = ({ children }: any) => {
       }}
     >
       <>{children}</>
+      {profile?.role !== Role.ADMIN && profile?.role !== Role.DELIVERER && (
+        <MessengerBox />
+      )}
     </AuthContext.Provider>
   );
 };

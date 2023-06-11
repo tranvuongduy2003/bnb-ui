@@ -104,7 +104,7 @@ const ProfileEdit: React.FunctionComponent = () => {
               ? URL.createObjectURL(fileList[0].originFileObj as any)
               : profile?.avatar
               ? profile?.avatar
-              : "https://picsum.photos/200"
+              : "/assets/avatar.png"
           }
           size={138}
         ></Avatar>

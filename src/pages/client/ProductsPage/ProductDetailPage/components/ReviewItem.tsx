@@ -11,7 +11,10 @@ const ReviewItem: React.FunctionComponent<IReviewItemProps> = ({ data }) => {
     <div className="mb-10 last:mb-0">
       <Row align={"middle"} gutter={12}>
         <Col>
-          <Avatar src={data.UserModel.avatar} size={"large"} />
+          <Avatar
+            src={data.UserModel.avatar || "/assets/avatar.png"}
+            size={"large"}
+          />
         </Col>
         <Col flex={1} className="flex flex-col justify-between">
           <div>
