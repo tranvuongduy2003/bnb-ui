@@ -8,6 +8,12 @@ export interface IReview {
   productId: number | string;
   createdAt: string | Date;
   updatedAt: string | Date;
+  UserModel: UserModel;
+}
+
+export interface UserModel {
+  fullname: string;
+  avatar: string;
 }
 
 export interface IRatingPoint {

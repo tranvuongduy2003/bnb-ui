@@ -1,6 +1,5 @@
 import { createNewProduct } from "@/apis/product.api";
 import { app } from "@/firebase";
-import { useAppStore } from "@/stores/useAppStore";
 import { useBrandStore } from "@/stores/useBrandStore";
 import { useCategoriesStore } from "@/stores/useCategoryStore";
 import validator from "@/utils/validateImage";
@@ -56,8 +55,7 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
   };
 
   const navigate = useNavigate();
-  const isLoading = useAppStore((state) => state.isLoading);
-  const setIsLoading = useAppStore((state) => state.setIsLoading);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const categories = useCategoriesStore((state) => state.categories);
 
   const categoryOptions = categories.map((item) => ({
@@ -66,7 +64,7 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
   }));
 
   const brandOptions = brands.map((item) => ({
-    value: item.id,
+    value: item.name,
     label: item.name,
   }));
 
@@ -84,11 +82,14 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
   };
 
   const handleAddNewProduct = async (values: any) => {
-    const { images, categories_id, ...rest } = values;
+    const { images, categoryId, ...rest } = values;
     const storage = getStorage(app);
     const imageURLs = await Promise.all(
       images.fileList.map(async (image: any) => {
-        const storageRef = ref(storage, `products/${image.name}`);
+        const storageRef = ref(
+          storage,
+          `${categoryId === 1 ? "perfume" : "cosmetic"}/${image.name}`
+        );
         await uploadBytes(storageRef, image.originFileObj);
         const imageURL = await getDownloadURL(storageRef);
         return imageURL;
@@ -97,6 +98,7 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
 
     const payload = {
       ...rest,
+      categoryId: categoryId,
       images: [...imageURLs],
       sold: 0,
     };
@@ -131,7 +133,10 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
         <Button
           type="primary"
           loading={isLoading}
-          onClick={() => form.submit()}
+          onClick={() => {
+            setIsLoading(true);
+            form.submit();
+          }}
         >
           Create
         </Button>,

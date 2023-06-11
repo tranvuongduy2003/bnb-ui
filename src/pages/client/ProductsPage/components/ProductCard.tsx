@@ -1,4 +1,5 @@
 import { IProduct } from "@/interfaces/IProduct";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, Card, Typography, message } from "antd";
@@ -13,6 +14,7 @@ const ProductCard: React.FunctionComponent<IProductCardProps> = ({ data }) => {
   const navigate = useNavigate();
 
   const addToCart = useCartStore((state) => state.addToCart);
+  const loggedIn = useAuthStore((state) => state.loggedIn);
 
   const buttonRef = useRef<any>();
 
@@ -57,6 +59,7 @@ const ProductCard: React.FunctionComponent<IProductCardProps> = ({ data }) => {
               style: "currency",
               currency: "VND",
             }).format(JSON.parse(data.price as string))}`}
+            <span className="text-base font-normal text-neutral-700">{` (${data.inventory})`}</span>
           </Typography.Title>
           {data.inventory > 0 ? (
             <Button
@@ -64,8 +67,12 @@ const ProductCard: React.FunctionComponent<IProductCardProps> = ({ data }) => {
               type="primary"
               className="bg-primary"
               onClick={() => {
-                addToCart({ ...data, quantity: 1 });
-                message.success("Item is added to cart!");
+                if (loggedIn) {
+                  addToCart({ ...data, quantity: 1 });
+                  message.success("Item is added to cart!");
+                } else {
+                  navigate("/auth/login");
+                }
               }}
             >
               <PlusOutlined />

@@ -1,12 +1,11 @@
-import { Menu, MenuProps } from "antd";
-import React from "react";
 import {
   AppstoreOutlined,
-  BellOutlined,
   SettingOutlined,
   ShoppingCartOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
+import { Menu, MenuProps } from "antd";
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Sidebar: React.FunctionComponent = () => {

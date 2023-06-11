@@ -16,11 +16,7 @@ const Deactivate: React.FunctionComponent = () => {
       const { data } = await changeUserStatus(profile?.id as any, true);
       setProfile(data);
       setIsLoading(false);
-      notification.success({
-        message: "Deactive account successfully!",
-        duration: 0.25,
-        onClose: () => logOut(),
-      });
+      logOut();
     } catch (error: any) {
       console.log(error);
       setIsLoading(false);

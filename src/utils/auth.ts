@@ -2,7 +2,6 @@ import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
 import axios from "axios";
-import { Navigate } from "react-router-dom";
 
 export const logOut = () => {
   const setIsLoading = useAppStore.getState().setIsLoading;
@@ -14,7 +13,6 @@ export const logOut = () => {
   resetCart();
 
   setIsLoading(false);
-  Navigate({ to: "/auth/login" });
 };
 
 export const getAccessToken = () => {

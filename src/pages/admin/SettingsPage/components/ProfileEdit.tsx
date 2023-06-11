@@ -1,6 +1,5 @@
 import { updateUserProfile } from "@/apis/user.api";
 import { app } from "@/firebase";
-import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import validator from "@/utils/validateImage";
 import { EditOutlined } from "@ant-design/icons";
@@ -16,9 +15,14 @@ import {
   notification,
 } from "antd";
 import { RcFile, UploadFile, UploadProps } from "antd/es/upload";
+import dayjs from "dayjs";
+import localeData from "dayjs/plugin/localeData";
+import weekday from "dayjs/plugin/weekday";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
-import dayjs from "dayjs";
+
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 
 const ProfileEdit: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
@@ -98,8 +102,8 @@ const ProfileEdit: React.FunctionComponent = () => {
           src={
             fileList?.length > 0
               ? URL.createObjectURL(fileList[0].originFileObj as any)
-              : profile.avatar
-              ? profile.avatar
+              : profile?.avatar
+              ? profile?.avatar
               : "https://picsum.photos/200"
           }
           size={138}
@@ -121,7 +125,7 @@ const ProfileEdit: React.FunctionComponent = () => {
       <Form.Item
         name="fullname"
         label={<span className="text-sm font-medium">Full name</span>}
-        initialValue={profile.fullname}
+        initialValue={profile?.fullname}
       >
         <Typography.Text
           editable={{
@@ -140,7 +144,7 @@ const ProfileEdit: React.FunctionComponent = () => {
       <Form.Item
         name="email"
         label={<span className="text-sm font-medium">Email</span>}
-        initialValue={profile.email}
+        initialValue={profile?.email}
       >
         <Typography.Text className="flex justify-between">
           {emailWatch || <span className="text-neutral-400">Not provided</span>}
@@ -150,14 +154,16 @@ const ProfileEdit: React.FunctionComponent = () => {
         name="dob"
         label={<span className="text-sm font-medium">Date of birth</span>}
       >
-        <DatePicker
-          defaultValue={dayjs(profile.dob)}
-          open={openDatePicker}
-          disabled={!openDatePicker}
-          onChange={onDateChange}
-          showToday={false}
-          bordered={false}
-        />
+        {profile?.dob && (
+          <DatePicker
+            defaultValue={dayjs(profile.dob)}
+            open={openDatePicker}
+            disabled={!openDatePicker}
+            onChange={onDateChange}
+            showToday={false}
+            bordered={false}
+          />
+        )}
         <span
           className="float-right text-sm underline cursor-pointer text-neutral-700"
           onClick={() => setOpenDatePicker(!openDatePicker)}
@@ -168,7 +174,7 @@ const ProfileEdit: React.FunctionComponent = () => {
       <Form.Item
         name="phone"
         label={<span className="text-sm font-medium">Phone number</span>}
-        initialValue={profile.phone}
+        initialValue={profile?.phone}
       >
         <Typography.Text
           editable={{

@@ -11,7 +11,7 @@ const AuthProtectedRoute: React.FunctionComponent = () => {
     <Navigate to="/" replace />
   ) : loggedIn && profile?.role === Role.ADMIN ? (
     <Navigate to="/admin/dashboard" replace />
-  ) : loggedIn && profile?.role === Role.DELIVERY ? (
+  ) : loggedIn && profile?.role === Role.DELIVERER ? (
     <Navigate to="/delivery/order-management" replace />
   ) : (
     <Outlet />

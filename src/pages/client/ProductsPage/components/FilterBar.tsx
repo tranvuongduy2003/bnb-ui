@@ -92,10 +92,12 @@ const FilterBar: React.FunctionComponent = () => {
     });
 
     changedProducts = changedProducts.filter((item) => {
+      if (brandValue.length === brandOptions.length) return true;
       return brandValue?.includes(item.brandId);
     });
 
     changedProducts = changedProducts.filter((item) => {
+      if (ratingValue.length === ratingOptions.length) return true;
       for (let index = 0; index < ratingValue.length; index++) {
         if (
           item.avgRating <= (ratingValue[index] as number) &&
@@ -142,7 +144,7 @@ const FilterBar: React.FunctionComponent = () => {
     }
 
     setFilteredProducts(changedProducts);
-  }, [categoryValue, brandValue, ratingValue, limit, sortBy]);
+  }, [products, brands, categoryValue, brandValue, ratingValue, limit, sortBy]);
 
   return (
     <div className="w-full p-4 rounded-md shadow-md">

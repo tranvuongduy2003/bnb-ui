@@ -31,7 +31,7 @@ const TimelineItem: React.FunctionComponent<ITimelineItemProps> = ({
                 {new Intl.NumberFormat("vi-VN", {
                   style: "currency",
                   currency: "VND",
-                }).format(JSON.parse(order.price || "0"))}
+                }).format(JSON.parse(order.totalPrice || "0"))}
               </span>
             </Col>
             <Col span={3}>

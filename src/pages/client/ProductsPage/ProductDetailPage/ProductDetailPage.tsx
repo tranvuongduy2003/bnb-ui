@@ -1,5 +1,6 @@
 import { getProductById } from "@/apis/product.api";
 import { useAppStore } from "@/stores/useAppStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
 import { useProductStore } from "@/stores/useProductStore";
 import {
@@ -31,6 +32,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const product = useProductStore((state) => state.product);
   const setProduct = useProductStore((state) => state.setProduct);
+  const loggedIn = useAuthStore((state) => state.loggedIn);
 
   const [previewImage, setPreviewImage] = useState<string>();
 
@@ -137,7 +139,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
               <span className="mb-2 text-sm font-semibold text-neutral-700">
                 Quantity
               </span>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-3">
                 <Button.Group>
                   <Button onClick={decrease}>
                     <MinusOutlined />
@@ -156,6 +158,7 @@ const ProductDetailPage: React.FunctionComponent = () => {
                     <PlusOutlined />
                   </Button>
                 </Button.Group>
+                <span className="text-base text-neutral-700">{`${product?.inventory} pieces available`}</span>
               </div>
             </Col>
           </Row>
@@ -181,8 +184,12 @@ const ProductDetailPage: React.FunctionComponent = () => {
                     icon={<ShoppingCartOutlined />}
                     className="text-primary border-primary hover:!text-primary-500 hover:!border-primary-500 w-48"
                     onClick={() => {
-                      product && addToCart({ ...product, quantity });
-                      message.success("Item is added to cart!");
+                      if (loggedIn) {
+                        product && addToCart({ ...product, quantity });
+                        message.success("Item is added to cart!");
+                      } else {
+                        navigate("/auth/login");
+                      }
                     }}
                   >
                     Add to cart

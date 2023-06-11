@@ -71,6 +71,11 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
     label: item.name,
   }));
 
+  const brandOptions = brands.map((item) => ({
+    value: item.name,
+    label: item.name,
+  }));
+
   useEffect(() => {
     fetchProductData.current = async () => {
       setIsLoading(true);
@@ -90,7 +95,9 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
         setFileList(files);
         if (product) setIsLoading(false);
       } catch (error) {
-        setIsLoading(false);
+        setTimeout(() => {
+          setShow(false);
+        }, 5000);
         console.log(error);
       }
     };
@@ -108,10 +115,13 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
   };
 
   const handleEditNewProduct = async (values: any) => {
-    const { images, ...rest } = values;
+    const { images, categoryId, ...rest } = values;
     const imageURLs = await Promise.all(
       images.fileList.map(async (image: any) => {
-        const storageRef = ref(storage, `products/${image.name}`);
+        const storageRef = ref(
+          storage,
+          `${categoryId === 1 ? "perfume" : "cosmetic"}/${image.name}`
+        );
         await uploadBytes(storageRef, image.originFileObj);
         const imageURL = await getDownloadURL(storageRef);
         return imageURL;
@@ -120,6 +130,7 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
 
     const payload = {
       ...rest,
+      categoryId: categoryId,
       images: [...imageURLs],
       sold: 0,
     };
@@ -184,7 +195,12 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
       footer={[
         <></>,
         <div className="flex justify-between">
-          <Button onClick={() => handleDeleteProduct()} danger type="primary">
+          <Button
+            loading={isLoading}
+            onClick={() => handleDeleteProduct()}
+            danger
+            type="primary"
+          >
             Delete
           </Button>
           <div className="flex gap-2">
@@ -293,7 +309,7 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
                       </Space>
                     </>
                   )}
-                  options={items.map((item) => ({ label: item, value: item }))}
+                  options={brandOptions}
                 />
               </Form.Item>
             </Col>

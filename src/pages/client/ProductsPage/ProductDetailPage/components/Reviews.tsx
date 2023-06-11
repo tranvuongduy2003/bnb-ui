@@ -1,5 +1,6 @@
 import { getAllReviews } from "@/apis/product.api";
 import { IRatingPoint } from "@/interfaces/IReview";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { useReviewStore } from "@/stores/useReviewStore";
 import { StarFilled } from "@ant-design/icons";
 import {
@@ -25,6 +26,7 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
   const setReviews = useReviewStore((state) => state.setReviews);
   const ratingPoints = useReviewStore((state) => state.ratingPoints);
   const setRatingPoints = useReviewStore((state) => state.setRatingPoints);
+  const loggedIn = useAuthStore((state) => state.loggedIn);
 
   const [reviewRates, setReviewRates] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -116,7 +118,7 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
                 onChange={onChangePage}
               />
             </div>
-            <PostReview productId={productId} />
+            {loggedIn && <PostReview productId={productId} />}
           </Col>
         </Row>
       </Col>

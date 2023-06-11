@@ -1,9 +1,11 @@
 import { login } from "@/apis/auth.api";
 import { Role } from "@/constants/role";
+import { app } from "@/firebase";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { notification } from "antd";
-import React from "react";
+import { getDownloadURL, getStorage, ref } from "firebase/storage";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const AuthContext = React.createContext({});
@@ -17,6 +19,16 @@ const AuthProvider = ({ children }: any) => {
   const setToken = useAuthStore((state) => state.setToken);
   const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
   const setProfile = useAuthStore((state) => state.setProfile);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      const storage = getStorage(app);
+      const imagesRef = ref(storage, "perfume/");
+      const url = await getDownloadURL(imagesRef);
+      console.log(url);
+    };
+    fetchImage();
+  }, []);
 
   const logIn = async (payload: any) => {
     setIsLoading(true);

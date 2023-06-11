@@ -164,7 +164,7 @@ const ClientTable: React.FunctionComponent = () => {
             <img
               src={record.avatar}
               alt="avatar"
-              className="rounded-full w-9 h-9"
+              className="object-cover rounded-full w-9 h-9"
             />
           </div>
           <div className="flex flex-col gap-[2px]">
@@ -213,7 +213,7 @@ const ClientTable: React.FunctionComponent = () => {
       dataIndex: "isActive",
       key: "isActive",
       width: "10%",
-      render: (value, record, index) => <UserStatucTag isActive />,
+      render: (value, record, index) => <UserStatucTag isActive={value} />,
     },
     {
       title: "Activate",

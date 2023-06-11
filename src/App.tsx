@@ -21,6 +21,7 @@ import AuthProtectedRoute from "@/layout/AuthProtectedRoute";
 import AdminLayout from "@/layout/admin/AdminLayout";
 import UserLayout from "@/layout/client/UserLayout";
 import DeliveryLayout from "@/layout/delivery/DeliveryLayout";
+import SplashLayout from "./layout/SplashLayout";
 
 const App: React.FunctionComponent = () => {
   return (
@@ -32,11 +33,14 @@ const App: React.FunctionComponent = () => {
           <Route path="/auth/sign-up" element={<SignupPage />} />
         </Route>
 
-        {/* User Routes */}
-        <Route element={<UserLayout />}>
+        <Route element={<SplashLayout />}>
           {/* Products */}
           <Route path="/" element={<ProductsPage />} />
           <Route path="/product/:productId" element={<ProductDetailPage />} />
+        </Route>
+
+        {/* User Routes */}
+        <Route element={<UserLayout />}>
           {/* Profile */}
           <Route path="/profile" element={<ProfilePage />} />
           {/* Order */}
