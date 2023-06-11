@@ -13,11 +13,7 @@ type NotificationType = "success" | "info" | "warning" | "error";
 
 const MessengerBox = () => {
   return ReactDOM.createPortal(
-    <>
-      <div id="fb-root"></div>
-
-      <div id="fb-customer-chat" className="fb-customerchat"></div>
-    </>,
+    <div id="fb-root"></div>,
     document.querySelector("body") as Element
   );
 };
