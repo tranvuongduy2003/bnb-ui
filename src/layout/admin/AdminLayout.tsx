@@ -10,6 +10,11 @@ const AdminLayout: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
   const loggedIn = useAuthStore((state) => state.loggedIn);
 
+  const fbRoot = document.getElementById("fb-root");
+  const fbCustomerChat = document.getElementById("fb-customer-chat");
+  fbRoot?.remove();
+  fbCustomerChat?.remove();
+
   return loggedIn && profile?.role === Role.ADMIN ? (
     <Layout>
       <Layout.Sider className="!fixed top-0 !w-64 !max-w-full h-screen">
