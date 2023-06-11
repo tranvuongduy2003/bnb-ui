@@ -112,9 +112,7 @@ const Header: React.FunctionComponent = () => {
               onOpenChange={() => setOpen(!open)}
             >
               <Avatar
-                src={
-                  profile?.avatar ? profile.avatar : "https://picsum.photos/200"
-                }
+                src={profile?.avatar ? profile.avatar : "/assets/avatar.png"}
                 size={36}
                 className="cursor-pointer"
               />
