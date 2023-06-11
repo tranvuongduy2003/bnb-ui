@@ -1,10 +1,10 @@
+import { ICart } from "@/interfaces/ICart";
+import { useCartStore } from "@/stores/useCartStore";
+import { DeleteOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, Col, Input, Row, Typography } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import React, { useState } from "react";
-import { DeleteOutlined, MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { useCartStore } from "@/stores/useCartStore";
-import { ICart } from "@/interfaces/ICart";
 
 const CartTable: React.FunctionComponent = () => {
   const navigate = useNavigate();
@@ -76,7 +76,9 @@ const CartTable: React.FunctionComponent = () => {
         <span>{`${new Intl.NumberFormat("vi-VN", {
           style: "currency",
           currency: "VND",
-        }).format(cart[index].quantity * record.price)}`}</span>
+        }).format(
+          cart[index].quantity * JSON.parse(record.price as string)
+        )}`}</span>
       ),
     },
     {
@@ -120,7 +122,11 @@ const CartTable: React.FunctionComponent = () => {
               style: "currency",
               currency: "VND",
             }).format(
-              cart.reduce((prev, cur) => prev + cur.quantity * cur.price, 0)
+              cart.reduce(
+                (prev, cur) =>
+                  prev + cur.quantity * JSON.parse(cur.price as string),
+                0
+              )
             )}
           </Typography.Title>
         </div>

@@ -1,8 +1,8 @@
+import { ICart } from "@/interfaces/ICart";
 import { Col, Row } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ICart } from "@/interfaces/ICart";
 
 interface IOrdersTableProps {
   data: ICart[];
@@ -50,7 +50,7 @@ const columns: ColumnsType<ICart> = [
       <span>{`${new Intl.NumberFormat("vi-VN", {
         style: "currency",
         currency: "VND",
-      }).format(record.quantity * record.price)}`}</span>
+      }).format(record.quantity * JSON.parse(record.price as string))}`}</span>
     ),
   },
 ];
