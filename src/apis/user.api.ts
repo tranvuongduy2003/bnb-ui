@@ -28,9 +28,6 @@ export const changeUserPassword = (data: any) => {
   return httpRequest.patch("/users/change-password", data);
 };
 
-export const changeUserStatus = (
-  userId: string | number,
-  isActive: boolean
-) => {
+export const changeUserStatus = (userId: string | number, isActive: 0 | 1) => {
   return httpRequest.patch(`users/change-status/${userId}/${isActive}`);
 };

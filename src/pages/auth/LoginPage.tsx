@@ -1,6 +1,6 @@
 import { AuthContext } from "@/context/AuthProvider";
 import { useAppStore } from "@/stores/useAppStore";
-import { Row, Col, Image, Typography, Form, Input, Button } from "antd";
+import { Button, Col, Form, Image, Input, Row, Typography } from "antd";
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +21,11 @@ const LoginPage: React.FunctionComponent = () => {
       <Col span={12} className="bg-white">
         <Row justify={"space-between"} align={"middle"} className="px-12 pt-14">
           <Col>
-            <img src="/assets/logo.png" alt="logo" />
+            <img
+              src="/assets/logo.png"
+              alt="logo"
+              onClick={() => navigate("/")}
+            />
           </Col>
           <Col>
             <span>Don't you have an account? </span>

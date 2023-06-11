@@ -6,6 +6,7 @@ import { useReviewStore } from "@/stores/useReviewStore";
 import { StarFilled } from "@ant-design/icons";
 import {
   Col,
+  Empty,
   Pagination,
   PaginationProps,
   Progress,
@@ -82,11 +83,13 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
               className="text-center"
               style={{ margin: 0, marginBottom: 40 }}
             >
-              {(
-                reviews
-                  .map((item) => item.rating)
-                  .reduce((prev, cur) => prev + cur, 0) / reviews.length
-              ).toFixed(1)}
+              {reviews && reviews.length > 0
+                ? (
+                    reviews
+                      .map((item) => item.rating)
+                      .reduce((prev, cur) => prev + cur, 0) / reviews.length
+                  ).toFixed(1)
+                : 0}
             </Typography.Title>
             <div className="flex flex-col gap-4">
               {reviewRates.map((rate, index) => (
@@ -107,11 +110,15 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
             </div>
           </Col>
           <Col span={16}>
-            {reviews
-              .slice((currentPage - 1) * perPage, currentPage * perPage)
-              .map((review) => (
-                <ReviewItem key={review.id} data={review} />
-              ))}
+            {reviews && reviews.length > 0 ? (
+              reviews
+                .slice((currentPage - 1) * perPage, currentPage * perPage)
+                .map((review) => <ReviewItem key={review.id} data={review} />)
+            ) : (
+              <div className="mb-10">
+                <Empty />
+              </div>
+            )}
             <div className="flex justify-center mb-10">
               <Pagination
                 defaultCurrent={1}

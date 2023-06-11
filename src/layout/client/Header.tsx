@@ -87,43 +87,39 @@ const Header: React.FunctionComponent = () => {
         />
       </div> */}
       <div className="flex items-center gap-5">
+        <Badge count={cart.length} size="default">
+          <div
+            className="text-xl cursor-pointer"
+            onClick={() => navigate("/cart")}
+          >
+            <ShoppingCartOutlined />
+          </div>
+        </Badge>
         {loggedIn ? (
-          <>
-            <Badge count={cart.length} size="default">
-              <div
-                className="text-xl cursor-pointer"
-                onClick={() => navigate("/cart")}
-              >
-                <ShoppingCartOutlined />
-              </div>
-            </Badge>
-            <div>
-              <Popover
-                content={
-                  <Menu
-                    mode="vertical"
-                    items={items}
-                    className="!border-none"
-                    selectedKeys={[""]}
-                  />
-                }
-                trigger="click"
-                placement="bottomLeft"
-                open={open}
-                onOpenChange={() => setOpen(!open)}
-              >
-                <Avatar
-                  src={
-                    profile?.avatar
-                      ? profile.avatar
-                      : "https://picsum.photos/200"
-                  }
-                  size={36}
-                  className="cursor-pointer"
+          <div>
+            <Popover
+              content={
+                <Menu
+                  mode="vertical"
+                  items={items}
+                  className="!border-none"
+                  selectedKeys={[""]}
                 />
-              </Popover>
-            </div>{" "}
-          </>
+              }
+              trigger="click"
+              placement="bottomLeft"
+              open={open}
+              onOpenChange={() => setOpen(!open)}
+            >
+              <Avatar
+                src={
+                  profile?.avatar ? profile.avatar : "https://picsum.photos/200"
+                }
+                size={36}
+                className="cursor-pointer"
+              />
+            </Popover>
+          </div>
         ) : (
           <>
             <Button

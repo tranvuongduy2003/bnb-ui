@@ -42,7 +42,7 @@ const ClientTable: React.FunctionComponent = () => {
 
   const handleChangeUserStatus = async (
     userId: string | number,
-    status: boolean
+    status: 0 | 1
   ) => {
     setIsLoading(true);
     try {
@@ -224,7 +224,7 @@ const ClientTable: React.FunctionComponent = () => {
         value ? (
           <Button
             loading={isLoading}
-            onClick={() => handleChangeUserStatus(record.id, false)}
+            onClick={() => handleChangeUserStatus(record.id, 0)}
             danger
             className="hover:!border-red-500 hover:!text-white hover:!bg-red-500 w-full"
           >
@@ -233,7 +233,7 @@ const ClientTable: React.FunctionComponent = () => {
         ) : (
           <Button
             loading={isLoading}
-            onClick={() => handleChangeUserStatus(record.id, true)}
+            onClick={() => handleChangeUserStatus(record.id, 1)}
             className="w-full text-green-600 border-green-600 hover:!border-green-600 hover:!text-white hover:!bg-green-600"
           >
             Activate

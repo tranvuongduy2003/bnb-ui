@@ -13,7 +13,7 @@ const Deactivate: React.FunctionComponent = () => {
   const handleDeactiveUser = async () => {
     setIsLoading(true);
     try {
-      const { data } = await changeUserStatus(profile?.id as any, true);
+      const { data } = await changeUserStatus(profile?.id as any, 1);
       setProfile(data);
       setIsLoading(false);
       logOut();

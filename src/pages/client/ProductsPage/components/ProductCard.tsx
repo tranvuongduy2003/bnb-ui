@@ -1,4 +1,3 @@
-import { Role } from "@/constants/role";
 import { IProduct } from "@/interfaces/IProduct";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
@@ -65,17 +64,12 @@ const ProductCard: React.FunctionComponent<IProductCardProps> = ({ data }) => {
           </Typography.Title>
           {data.inventory > 0 ? (
             <Button
-              disabled={profile?.role !== Role.CUSTOMER}
               ref={buttonRef}
               type="primary"
               className="bg-primary"
               onClick={() => {
-                if (loggedIn) {
-                  addToCart({ ...data, quantity: 1 });
-                  message.success("Item is added to cart!");
-                } else {
-                  navigate("/auth/login");
-                }
+                addToCart({ ...data, quantity: 1 });
+                message.success("Item is added to cart!");
               }}
             >
               <PlusOutlined />

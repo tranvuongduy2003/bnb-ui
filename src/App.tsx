@@ -37,6 +37,7 @@ const App: React.FunctionComponent = () => {
           {/* Products */}
           <Route path="/" element={<ProductsPage />} />
           <Route path="/product/:productId" element={<ProductDetailPage />} />
+          <Route path="/cart" element={<CartPage />} />
         </Route>
 
         {/* User Routes */}
@@ -47,7 +48,6 @@ const App: React.FunctionComponent = () => {
           <Route path="/orders" element={<OrderHistoryPage />} />
           {/* Checkout */}
           <Route path="/checkout" element={<CheckoutPage />} />
-          <Route path="/cart" element={<CartPage />} />
           <Route
             path="/checkout/confirmation"
             element={<CheckoutConfirmationPage />}
