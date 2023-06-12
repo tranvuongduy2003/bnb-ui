@@ -24,12 +24,8 @@ const EditOrderModal: React.FunctionComponent<IEditOrderModalProps> = ({
 
   const statusOptions = [
     { value: Status.CANCELLED, label: Status.CANCELLED },
-    { value: Status.CONFIRMED, label: Status.CONFIRMED },
     { value: Status.DELIVERED, label: Status.DELIVERED },
-    { value: Status.PAID, label: Status.PAID },
     { value: Status.PENDING, label: Status.PENDING },
-    { value: Status.RETURNED, label: Status.RETURNED },
-    { value: Status.UNPAID, label: Status.UNPAID },
   ];
 
   const handleChangeStatus = async (value: any) => {

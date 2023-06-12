@@ -28,20 +28,6 @@ const StatusTag: React.FunctionComponent<IStatusTagProps> = ({ value }) => {
         </div>
       );
 
-    case Status.PAID:
-      return (
-        <div className="inline-block px-3 py-1 text-green-500 bg-green-100 rounded-full">
-          {value}
-        </div>
-      );
-
-    case Status.CONFIRMED:
-      return (
-        <div className="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-500">
-          {value}
-        </div>
-      );
-
     default:
       break;
   }
