@@ -197,28 +197,12 @@ const OrderTable: React.FunctionComponent = () => {
           value: Status.CANCELLED,
         },
         {
-          text: Status.CONFIRMED,
-          value: Status.CONFIRMED,
-        },
-        {
           text: Status.DELIVERED,
           value: Status.DELIVERED,
         },
         {
-          text: Status.PAID,
-          value: Status.PAID,
-        },
-        {
           text: Status.PENDING,
           value: Status.PENDING,
-        },
-        {
-          text: Status.RETURNED,
-          value: Status.RETURNED,
-        },
-        {
-          text: Status.UNPAID,
-          value: Status.UNPAID,
         },
       ],
       onFilter: (value: any, record: IOrder) => record.status === value,
@@ -234,8 +218,7 @@ const OrderTable: React.FunctionComponent = () => {
       key: "edit",
       width: "10%",
       render: (value, record, index) =>
-        record.status !== Status.CANCELLED &&
-        record.status !== Status.PAID && (
+        record.status !== Status.CANCELLED && (
           <span
             className="cursor-pointer text-primary"
             onClick={() => {
