@@ -43,6 +43,7 @@ const LoginPage: React.FunctionComponent = () => {
               Sign in
             </Typography.Title>
             <Form
+              data-cy="signin-email-form"
               form={form}
               labelCol={{ span: 24 }}
               className="px-48"

@@ -59,6 +59,7 @@ const SignupPage: React.FunctionComponent = () => {
       </Col>
       <Col span={12} className="flex items-center justify-center">
         <Form
+          data-cy="signup-email-form"
           form={form}
           labelCol={{ span: 24 }}
           size="large"
