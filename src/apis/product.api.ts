@@ -4,14 +4,6 @@ export const getAllProducts = () => {
   return httpRequest.get("/products");
 };
 
-export const searchProductsByName = (value: string) => {
-  return httpRequest.get("/products/search", {
-    params: {
-      keyword: value,
-    },
-  });
-};
-
 export const createNewProduct = (data: any) => {
   return httpRequest.post("/products", data);
 };

@@ -4,24 +4,8 @@ export const getAllUsers = () => {
   return httpRequest.get("/users");
 };
 
-export const createNewUser = (data: any) => {
-  return httpRequest.post("/users", data);
-};
-
-export const getUserById = (userId: string) => {
-  return httpRequest.get(`/users/${userId}`);
-};
-
-export const updateUserById = (userId: string | number, data: any) => {
-  return httpRequest.put(`/users/${userId}`, data);
-};
-
 export const updateUserProfile = (data: any) => {
   return httpRequest.put("/users/profile", data);
-};
-
-export const deleteUserById = (userId: string | number) => {
-  return httpRequest.delete(`/users/${userId}`);
 };
 
 export const changeUserPassword = (data: any) => {

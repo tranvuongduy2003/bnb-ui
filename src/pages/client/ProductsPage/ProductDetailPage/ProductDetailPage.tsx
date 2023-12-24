@@ -12,7 +12,6 @@ import {
   Button,
   Col,
   Input,
-  RadioChangeEvent,
   Row,
   Skeleton,
   Spin,
@@ -32,7 +31,6 @@ const ProductDetailPage: React.FunctionComponent = () => {
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const product = useProductStore((state) => state.product);
   const setProduct = useProductStore((state) => state.setProduct);
-  const loggedIn = useAuthStore((state) => state.loggedIn);
 
   const [previewImage, setPreviewImage] = useState<string>();
 
@@ -54,19 +52,6 @@ const ProductDetailPage: React.FunctionComponent = () => {
     };
     fetchProductData.current();
   }, []);
-
-  // colors
-  const colors = ["#FDE5FFFF", "#1599ae"];
-  const [color, setColor] = useState<string>();
-
-  // type
-  const [type, setType] = useState<string>();
-  const handleTypeChange = (e: RadioChangeEvent) => {
-    setType(e.target.value);
-  };
-
-  // promotion
-  const promotions = ["25%", "35%"];
 
   // quantity
   const [quantity, setQuantity] = useState<number>(1);

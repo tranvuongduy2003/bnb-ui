@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 import localeData from "dayjs/plugin/localeData";
 import weekday from "dayjs/plugin/weekday";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -32,6 +32,15 @@ const ProfileEdit: React.FunctionComponent = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (profile) {
+      form.setFieldValue("email", profile.email);
+      form.setFieldValue("fullname", profile.fullname);
+      form.setFieldValue("dob", profile.dob || new Date());
+      form.setFieldValue("phone", profile.phone);
+    }
+  }, [profile]);
 
   const fullnameWatch = Form.useWatch("fullname", form);
   const emailWatch = Form.useWatch("email", form);
@@ -154,16 +163,14 @@ const ProfileEdit: React.FunctionComponent = () => {
         name="dob"
         label={<span className="text-sm font-medium">Date of birth</span>}
       >
-        {profile?.dob && (
-          <DatePicker
-            defaultValue={dayjs(profile.dob)}
-            open={openDatePicker}
-            disabled={!openDatePicker}
-            onChange={onDateChange}
-            showToday={false}
-            bordered={false}
-          />
-        )}
+        <DatePicker
+          defaultValue={dayjs(profile?.dob || new Date())}
+          open={openDatePicker}
+          disabled={!openDatePicker}
+          onChange={onDateChange}
+          showToday={false}
+          bordered={false}
+        />
         <span
           className="float-right text-sm underline cursor-pointer text-neutral-700"
           onClick={() => setOpenDatePicker(!openDatePicker)}

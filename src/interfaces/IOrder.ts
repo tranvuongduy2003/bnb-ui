@@ -8,7 +8,7 @@ export interface IOrder {
   createdAt: string | Date;
   updatedAt: string | Date;
   deletedAt?: string | Date;
-  OrderItemModels: OrderItemModel[];
+  orderItems: OrderItemModel[];
 }
 
 export interface OrderItemModel {
@@ -16,6 +16,9 @@ export interface OrderItemModel {
   quantity: number;
   productId: number | string;
   orderId: number;
+  productName: string;
+  productImage: string;
+  productPrice: number;
   sumPrice: string;
   createdAt: string | Date;
   updatedAt: string | Date;

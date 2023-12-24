@@ -43,6 +43,10 @@ const DashboardPage: React.FunctionComponent = () => {
         const { data: productsData } = await getAllProducts();
         const { data: categoryData } = await getAllCategories();
         const { data: timelineData } = await getOrdersInTimeline();
+        console.log(
+          "🚀 ~ file: DashboardPage.tsx:46 ~ fetchDashboardData.current= ~ timelineData:",
+          timelineData
+        );
 
         setStatistics(statisticsDate);
         setRevenues(revenueData);
@@ -93,8 +97,8 @@ const DashboardPage: React.FunctionComponent = () => {
               currency: "VND",
             }).format(
               statistics?.totalProfit
-                .map((item) => JSON.parse(item.profit))
-                .reduce((prev, cur) => prev + cur) || 0
+                ?.map((item) => item.profit)
+                ?.reduce((prev, cur) => prev + cur) || 0
             )}
           />
         </Col>
@@ -107,14 +111,13 @@ const DashboardPage: React.FunctionComponent = () => {
               currency: "VND",
             }).format(
               statistics?.totalProfit
-                .map((item) => JSON.parse(item.revenue))
-                .reduce((prev, cur) => prev + cur) || 0
+                ?.map((item) => item.revenue)
+                ?.reduce((prev, cur) => prev + cur) || 0
             )}
           />
         </Col>
       </Row>
 
-      {/* OVERVIEW */}
       <div className="p-6 mx-6 mt-8 rounded-lg shadow-md">
         <Typography.Title level={3} style={{ margin: 0 }}>
           Overview
@@ -133,7 +136,6 @@ const DashboardPage: React.FunctionComponent = () => {
         )}
       </div>
 
-      {/* SALES */}
       <div className="p-6 mx-6 mt-8 rounded-lg shadow-md">
         <Typography.Title level={3} style={{ margin: 0 }}>
           Sales
@@ -157,7 +159,6 @@ const DashboardPage: React.FunctionComponent = () => {
         )}
       </div>
 
-      {/* ORDERS */}
       <div className="p-6 mx-6 mt-8 rounded-lg shadow-md">
         <Typography.Title level={3} style={{ margin: 0 }}>
           Orders
@@ -193,15 +194,18 @@ const DashboardPage: React.FunctionComponent = () => {
                 )
               }
               dataSource={timeline?.slice(0, loadSize)}
-              renderItem={(item: any, index) => (
-                <List.Item className="!border-none">
-                  <TimelineItem
-                    key={index}
-                    title={item.date}
-                    orders={item.orders}
-                  />
-                </List.Item>
-              )}
+              renderItem={(item: any, index) => {
+                console.log("🚀 ~ file: DashboardPage.tsx:198 ~ item:", item);
+                return (
+                  <List.Item className="!border-none">
+                    <TimelineItem
+                      key={index}
+                      title={item.date}
+                      orders={item.orders}
+                    />
+                  </List.Item>
+                );
+              }}
             />
           )}
         </div>

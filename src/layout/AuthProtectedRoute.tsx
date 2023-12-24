@@ -5,6 +5,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const AuthProtectedRoute: React.FunctionComponent = () => {
   const profile = useAuthStore((state) => state.profile);
+  console.log("🚀 ~ file: AuthProtectedRoute.tsx:8 ~ profile:", profile);
   const loggedIn = useAuthStore((state) => state.loggedIn);
 
   return loggedIn && profile?.role === Role.CUSTOMER ? (

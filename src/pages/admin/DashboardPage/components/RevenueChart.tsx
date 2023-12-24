@@ -11,11 +11,10 @@ const RevenueChart: React.FunctionComponent = () => {
 
   revenues.forEach((revenue) => {
     const categoryName =
-      categories.find((item) => item.id === revenue.ProductModel.category_id)
-        ?.name || "";
+      categories.find((item) => item.id === revenue.categoryId)?.name || "";
 
-    const value = dataMap.get(revenue.Date);
-    dataMap.set(revenue.Date, { [categoryName]: revenue.Revenue, ...value });
+    const value = dataMap.get(revenue.date);
+    dataMap.set(revenue.date, { [categoryName]: revenue.revenue, ...value });
   });
 
   const data = [];

@@ -97,7 +97,7 @@ const OrderHistoryPage: React.FunctionComponent = () => {
                 className="!border-none"
               >
                 <div className="flex flex-col gap-6">
-                  {order.OrderItemModels.map((item) => (
+                  {order.orderItems.map((item) => (
                     <ProductOrderItem key={item.id} data={item} />
                   ))}
                 </div>
@@ -118,9 +118,9 @@ const OrderHistoryPage: React.FunctionComponent = () => {
                     currency: "VND",
                   }).format(
                     JSON.parse(
-                      order.OrderItemModels.map((item) =>
-                        JSON.parse(item.sumPrice)
-                      ).reduce((prev, cur) => prev + cur, 0)
+                      order.orderItems
+                        .map((item) => JSON.parse(item.sumPrice))
+                        .reduce((prev, cur) => prev + cur, 0)
                     )
                   )}`}
                 </span>

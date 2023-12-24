@@ -1,3 +1,4 @@
+import { refresh } from "@/apis/auth.api";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useCartStore } from "@/stores/useCartStore";
@@ -27,16 +28,8 @@ export const getRefreshToken = () => {
 
 export const handleRefreshToken = async () => {
   const refreshToken = getRefreshToken();
-  const { data } = await axios.post("/auth/refresh", {
-    baseURL: import.meta.env.VITE_SERVER_URL,
-    timeout: 20000,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${refreshToken}`,
-    },
-  });
-  const { token } = data.data;
+  const { data } = await refresh(refreshToken);
   const setToken = useAuthStore.getState().setToken;
-  setToken({ refreshToken, accessToken: token });
-  return token;
+  setToken({ refreshToken, accessToken: data });
+  return data;
 };

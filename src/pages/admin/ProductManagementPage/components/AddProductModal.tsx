@@ -64,7 +64,7 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
   }));
 
   const brandOptions = brands.map((item) => ({
-    value: item.name,
+    value: item.id,
     label: item.name,
   }));
 
@@ -84,24 +84,27 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
   const handleAddNewProduct = async (values: any) => {
     const { images, categoryId, ...rest } = values;
     const storage = getStorage(app);
-    const imageURLs = await Promise.all(
-      images.fileList.map(async (image: any) => {
-        const storageRef = ref(
-          storage,
-          `${categoryId === 1 ? "perfume" : "cosmetic"}/${image.name}`
-        );
-        await uploadBytes(storageRef, image.originFileObj);
-        const imageURL = await getDownloadURL(storageRef);
-        return imageURL;
-      })
-    );
 
     const payload = {
       ...rest,
       categoryId: categoryId,
-      images: [...imageURLs],
       sold: 0,
     };
+
+    if (images && images.fileList && images.fileList.length > 0) {
+      const imageURLs = await Promise.all(
+        images.fileList.map(async (image: any) => {
+          const storageRef = ref(
+            storage,
+            `${categoryId === 1 ? "perfume" : "cosmetic"}/${image.name}`
+          );
+          await uploadBytes(storageRef, image.originFileObj);
+          const imageURL = await getDownloadURL(storageRef);
+          return imageURL;
+        })
+      );
+      payload.images = imageURLs;
+    }
 
     console.log(payload);
 
@@ -186,7 +189,7 @@ const AddProductModal: React.FunctionComponent<IAddProductModalProps> = ({
         </Row>
         <Row gutter={18}>
           <Col span={12}>
-            <Form.Item name="brandName" label="Brand">
+            <Form.Item name="brandId" label="Brand">
               <Select
                 placeholder="Brand"
                 dropdownRender={(menu) => (

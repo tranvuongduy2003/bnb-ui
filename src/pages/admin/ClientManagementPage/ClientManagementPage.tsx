@@ -30,7 +30,6 @@ const ClientManagementPage: React.FunctionComponent = () => {
       setIsLoading(true);
       try {
         const { data } = await getAllUsers();
-        console.log(data);
         setClients(data);
         setIsLoading(false);
       } catch (error) {

@@ -11,15 +11,12 @@ const ReviewItem: React.FunctionComponent<IReviewItemProps> = ({ data }) => {
     <div className="mb-10 last:mb-0">
       <Row align={"middle"} gutter={12}>
         <Col>
-          <Avatar
-            src={data.UserModel.avatar || "/assets/avatar.png"}
-            size={"large"}
-          />
+          <Avatar src={data.avatar || "/assets/avatar.png"} size={"large"} />
         </Col>
         <Col flex={1} className="flex flex-col justify-between">
           <div>
             <span className="text-sm font-semibold">
-              {data.UserModel.fullname || "Lorem"}
+              {data.fullname || "Lorem"}
             </span>
           </div>
           <Rate value={data.rating} allowHalf disabled />

@@ -8,6 +8,7 @@ import { ICart } from "@/interfaces/ICart";
 import { addOrder } from "@/apis/order.api";
 import { useAppStore } from "@/stores/useAppStore";
 import { useCartStore } from "@/stores/useCartStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const CheckoutPage: React.FunctionComponent = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const CheckoutPage: React.FunctionComponent = () => {
 
   const setIsLoading = useAppStore((state) => state.setIsLoading);
   const removeFromCart = useCartStore((state) => state.removeFromCart);
+  const profile = useAuthStore((state) => state.profile);
 
   const handlePay = async () => {
     setIsLoading(true);
@@ -28,7 +30,7 @@ const CheckoutPage: React.FunctionComponent = () => {
         productId: item.id,
         quantity: item.quantity,
       }));
-      const payload = { ...value, products };
+      const payload = { ...value, userId: profile?.id, products };
       const { data } = await addOrder(payload);
       orders.forEach((item) => {
         removeFromCart(item.id);

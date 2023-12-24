@@ -99,8 +99,15 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
           })
         );
         setProduct(productData);
+        form.setFieldValue("name", productData.name);
+        form.setFieldValue("desc", productData.desc);
+        form.setFieldValue("price", productData.price);
+        form.setFieldValue("brandId", productData.brandId);
+        form.setFieldValue("importPrice", productData.importPrice);
+        form.setFieldValue("inventory", productData.inventory);
+        form.setFieldValue("categoryId", productData.categoryId);
         setFileList(files);
-        if (product) setIsLoading(false);
+        if (productData) setIsLoading(false);
       } catch (error) {
         setTimeout(() => {
           setShow(false);
@@ -123,10 +130,16 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
 
   const handleEditNewProduct = async (values: any) => {
     const { images, categoryId, ...rest } = values;
-    const imageURLs =
-      images &&
-      (await Promise.all(
-        images?.fileList.map(async (image: any) => {
+
+    const payload = {
+      ...rest,
+      categoryId: categoryId,
+      sold: 0,
+    };
+
+    if (images && images.fileList && images.fileList.length > 0) {
+      const imageURLs = await Promise.all(
+        images.fileList.map(async (image: any) => {
           const storageRef = ref(
             storage,
             `${categoryId === 1 ? "perfume" : "cosmetic"}/${image.name}`
@@ -135,14 +148,9 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
           const imageURL = await getDownloadURL(storageRef);
           return imageURL;
         })
-      ));
-
-    const payload = {
-      ...rest,
-      categoryId: categoryId,
-      sold: 0,
-      ...(imageURLs && { images: [...imageURLs] }),
-    };
+      );
+      payload.images = imageURLs;
+    }
 
     setIsLoading(true);
     try {
@@ -257,11 +265,7 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
               <Form.Item
                 name="importPrice"
                 label="Import price"
-                initialValue={
-                  product && product.importPrice
-                    ? JSON.parse(product.importPrice as string)
-                    : null
-                }
+                initialValue={product?.importPrice}
               >
                 <InputNumber
                   min={0}
@@ -274,11 +278,7 @@ const EditProductModal: React.FunctionComponent<IEditProductModalProps> = ({
               <Form.Item
                 name="price"
                 label="Price"
-                initialValue={
-                  product && product.price
-                    ? JSON.parse(product.price as string)
-                    : null
-                }
+                initialValue={product?.price}
               >
                 <InputNumber min={0} placeholder="Price" className="w-full" />
               </Form.Item>

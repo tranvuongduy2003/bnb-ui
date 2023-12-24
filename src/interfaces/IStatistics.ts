@@ -1,17 +1,17 @@
 export interface IStatistics {
   totalProducts: number;
   totalCustomer: number;
-  totalOrders: TotalOrder[];
+  totalOrder: TotalOrder[];
   totalProfit: TotalProfit[];
 }
 
 export interface TotalOrder {
-  Date: string;
-  TotalOrders: number;
+  date: string;
+  totalOrders: number;
 }
 
 export interface TotalProfit {
-  Date: string;
-  revenue: string;
-  profit: string;
+  date: string;
+  revenue: number;
+  profit: number;
 }

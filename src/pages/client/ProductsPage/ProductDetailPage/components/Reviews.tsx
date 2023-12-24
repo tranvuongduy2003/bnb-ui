@@ -92,21 +92,23 @@ const Reviews: React.FunctionComponent<IReviewsProps> = ({ productId }) => {
                 : 0}
             </Typography.Title>
             <div className="flex flex-col gap-4">
-              {reviewRates.map((rate, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between gap-3"
-                >
-                  <span className="text-xl leading-none">{5 - index}</span>
-                  <StarFilled className="text-2xl text-rating !leading-none" />
-                  <Progress
-                    percent={rate}
-                    showInfo={false}
-                    className="!m-0"
-                    strokeColor="#F3C63FFF"
-                  />
-                </div>
-              ))}
+              {reviewRates &&
+                reviewRates.length > 0 &&
+                reviewRates.map((rate, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between gap-3"
+                  >
+                    <span className="text-xl leading-none">{5 - index}</span>
+                    <StarFilled className="text-2xl text-rating !leading-none" />
+                    <Progress
+                      percent={rate}
+                      showInfo={false}
+                      className="!m-0"
+                      strokeColor="#F3C63FFF"
+                    />
+                  </div>
+                ))}
             </div>
           </Col>
           <Col span={16}>

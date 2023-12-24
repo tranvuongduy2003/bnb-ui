@@ -1,6 +1,6 @@
 import { getAllBrands } from "@/apis/brand.api";
 import { getAllCategories } from "@/apis/category.api";
-import { getAllProducts, searchProductsByName } from "@/apis/product.api";
+import { getAllProducts } from "@/apis/product.api";
 import { useAppStore } from "@/stores/useAppStore";
 import { useBrandStore } from "@/stores/useBrandStore";
 import { useCategoriesStore } from "@/stores/useCategoryStore";
@@ -53,11 +53,13 @@ const ProductsPage: React.FunctionComponent = () => {
     setIsLoading(true);
     try {
       if (searchValue && searchValue !== "") {
-        const { data } = await searchProductsByName(searchValue);
-        setProducts(data);
+        setFilteredProducts(
+          products.filter((product) =>
+            product.name.toLowerCase().includes(searchValue.toLowerCase())
+          )
+        );
       } else {
-        const { data } = await getAllProducts();
-        setProducts(data);
+        setFilteredProducts(products);
       }
       setIsLoading(false);
     } catch (error) {

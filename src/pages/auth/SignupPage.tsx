@@ -1,4 +1,5 @@
 import { signUp } from "@/apis/auth.api";
+import { Role } from "@/constants/role";
 import { useAppStore } from "@/stores/useAppStore";
 import { Button, Col, Form, Input, Row, Typography, notification } from "antd";
 import React from "react";
@@ -15,7 +16,7 @@ const SignupPage: React.FunctionComponent = () => {
   const handleSignUp = async (values: any) => {
     setIsLoading(true);
     try {
-      await signUp(values);
+      await signUp({ ...values, role: Role.CUSTOMER });
       setIsLoading(false);
       notification.success({
         message: "Create new account successfully!",

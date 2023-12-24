@@ -41,7 +41,7 @@ export default function initRequest() {
       return res.data;
     },
     async (error: any) => {
-      const statusCode = error.response?.data?.statusCode;
+      const statusCode = error.response?.status;
       const originalConfig = error.config;
 
       switch (statusCode) {

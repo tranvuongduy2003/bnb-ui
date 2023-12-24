@@ -203,8 +203,8 @@ const ProductTable: React.FunctionComponent = () => {
     },
     {
       title: "Rating",
-      dataIndex: "avgRating",
-      key: "avgRating",
+      dataIndex: "rating",
+      key: "rating",
       width: "15%",
       sorter: (a: any, b: any) => a - b,
       sortDirections: ["descend", "ascend"],

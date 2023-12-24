@@ -36,6 +36,7 @@ const PostReview: React.FunctionComponent<IPostReviewProps> = ({
     setIsLoading(true);
     try {
       const { data } = await addReview({
+        userId: profile?.id,
         rating,
         content,
         productId,

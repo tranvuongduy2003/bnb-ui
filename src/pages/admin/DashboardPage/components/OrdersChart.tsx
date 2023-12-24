@@ -5,9 +5,9 @@ import React from "react";
 const OrdersChart: React.FunctionComponent = () => {
   const statistics = useGeneralStore((state) => state.statistics);
 
-  const data: any = statistics?.totalOrders.map((item) => ({
-    x: item.Date,
-    y: item.TotalOrders,
+  const data: any = statistics?.totalOrder?.map((item) => ({
+    x: item.date,
+    y: item.totalOrders,
   }));
 
   const lineModal = [

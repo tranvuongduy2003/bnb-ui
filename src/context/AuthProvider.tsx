@@ -23,12 +23,12 @@ const AuthProvider = ({ children }: any) => {
     setIsLoading(true);
     try {
       // LOGIN THEN GET AND SET TOKENS
-      const { data: profile, token }: any = await login(payload);
-      const { password, ...rest } = profile;
+      const { data } = await login(payload);
+      const { user: profile, token } = data;
 
       // SAVE USER SESSION
       setToken(token);
-      setProfile(rest);
+      setProfile(profile);
       setLoggedIn(true);
 
       // NAVIGATE TO HOME PAGE

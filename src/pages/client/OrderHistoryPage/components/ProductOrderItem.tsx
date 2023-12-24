@@ -12,21 +12,19 @@ const ProductOrderItem: React.FunctionComponent<IProductOrderItemProps> = ({
   data,
 }) => {
   const navigate = useNavigate();
-  const products = useProductStore((state) => state.products);
-  const product = products.find((item) => item.id === data.productId);
 
   return (
     <Row gutter={20} align={"middle"}>
       <Col>
         <img
-          src="https://picsum.photos/300/200"
+          src={data.productImage}
           alt="product image"
-          className="object-cover h-32 w-36"
+          className="object-cover h-32 rounded-md w-36"
         />
       </Col>
       <Col flex={1} className="flex flex-col justify-center">
         <span className="text-sm font-semibold text-neutral-900">
-          {product?.name}
+          {data.productName}
         </span>
         <span className="mb-2 text-xs leading-5 text-neutral-500">
           {`Quantity: ${data.quantity}`}

@@ -30,14 +30,7 @@ export const useGeneralStore = create(
       }),
     setTimeline: (updatedTimeline: any) =>
       set((state) => {
-        const newTimeline: any = [];
-        for (const property in updatedTimeline) {
-          newTimeline.push({
-            date: property,
-            orders: updatedTimeline[property],
-          });
-        }
-        state.timeline = newTimeline;
+        state.timeline = updatedTimeline;
       }),
   }))
 );

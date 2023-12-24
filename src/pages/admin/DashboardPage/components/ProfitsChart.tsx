@@ -6,12 +6,12 @@ const ProfitsChart: React.FunctionComponent = () => {
   const statistics = useGeneralStore((state) => state.statistics);
 
   const profitData: any = statistics?.totalProfit.map((item) => ({
-    x: item.Date,
+    x: item.date,
     y: item.profit,
   }));
 
   const revenueData: any = statistics?.totalProfit.map((item) => ({
-    x: item.Date,
+    x: item.date,
     y: item.revenue,
   }));
 
